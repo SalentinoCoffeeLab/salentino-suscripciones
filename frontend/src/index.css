@@ -1,0 +1,22 @@
+:root {
+  font-family: 'Space Mono', monospace;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #1a1a1a;
+  background: #faf8f5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  max-width: 100%;
+  margin: 0 auto;
+}
