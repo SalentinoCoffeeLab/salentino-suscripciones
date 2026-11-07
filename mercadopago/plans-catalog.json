@@ -1,0 +1,18 @@
+{
+  "suministro_454_7": { "planId": "PENDING", "checkoutUrl": "https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_454_7", "price": 60000 },
+  "suministro_454_14": { "planId": "PENDING", "checkoutUrl": "https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_454_14", "price": 60000 },
+  "suministro_454_30": { "planId": "PENDING", "checkoutUrl": "https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_454_30", "price": 60000 },
+  "suministro_1000_7": { "planId": "PENDING", "checkoutUrl": "https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_1000_7", "price": 105000 },
+  "suministro_1000_14": { "planId": "PENDING", "checkoutUrl": "https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_1000_14", "price": 105000 },
+  "suministro_1000_30": { "planId": "PENDING", "checkoutUrl": "https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_1000_30", "price": 105000 },
+  "suministro_2000_7": { "planId": "PENDING", "checkoutUrl": "https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_2000_7", "price": 195000 },
+  "suministro_2000_14": { "planId": "PENDING", "checkoutUrl": "https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_2000_14", "price": 195000 },
+  "suministro_2000_30": { "planId": "PENDING", "checkoutUrl": "https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_2000_30", "price": 195000 },
+  "lab_discovery_14": { "planId": "PENDING", "checkoutUrl": "https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_disc_14", "price": 68000 },
+  "lab_discovery_30": { "planId": "PENDING", "checkoutUrl": "https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_disc_30", "price": 68000 },
+  "lab_ritual_14": { "planId": "PENDING", "checkoutUrl": "https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_rit_14", "price": 110000 },
+  "lab_ritual_30": { "planId": "PENDING", "checkoutUrl": "https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_rit_30", "price": 110000 },
+  "lab_contraste_14": { "planId": "PENDING", "checkoutUrl": "https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_con_14", "price": 125000 },
+  "lab_contraste_30": { "planId": "PENDING", "checkoutUrl": "https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_con_30", "price": 125000 },
+  "migration_podio_ritual": { "planId": "PENDING", "checkoutUrl": "https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_mig", "price": 90000 }
+}
