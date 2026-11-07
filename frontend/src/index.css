@@ -20,3 +20,12 @@ body {
   max-width: 100%;
   margin: 0 auto;
 }
+
+/* Hide scrollbar on mobile carousel */
+[role="list"] {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+[role="list"]::-webkit-scrollbar {
+  display: none;
+}

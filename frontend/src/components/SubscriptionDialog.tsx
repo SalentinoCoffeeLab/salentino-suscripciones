@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useState, useEffect, type FormEvent } from 'react'
 import type { CoffeePlan } from '../data/plans'
 import { getFrequencies, getMpPlanKey } from '../data/plans'
 import { submitSubscription } from '../lib/submit'
@@ -17,9 +17,24 @@ const FREQUENCY_LABELS: Record<number, string> = {
   30: 'Mensual',
 }
 
+const MOBILE_BREAKPOINT = 640
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' ? window.innerWidth < MOBILE_BREAKPOINT : false
+  )
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+  return isMobile
+}
+
 export function SubscriptionDialog({ plan, onClose, appsScriptUrl }: SubscriptionDialogProps) {
   const isLabSeries = plan.id.startsWith('lab-')
   const frequencies = getFrequencies(plan.id)
+  const isMobile = useIsMobile()
 
   const [coffee, setCoffee] = useState(isLabSeries ? 'Selección del tostador' : COFFEES[0])
   const [grind, setGrind] = useState('Grano')
@@ -32,6 +47,14 @@ export function SubscriptionDialog({ plan, onClose, appsScriptUrl }: Subscriptio
   const [deliveryNotes, setDeliveryNotes] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+
+  // Lock body scroll on mobile
+  useEffect(() => {
+    if (isMobile) {
+      document.body.style.overflow = 'hidden'
+      return () => { document.body.style.overflow = '' }
+    }
+  }, [isMobile])
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -51,7 +74,6 @@ export function SubscriptionDialog({ plan, onClose, appsScriptUrl }: Subscriptio
       return
     }
 
-    // Extract numeric price from plan.price string
     const numericPrice = parseInt(plan.price.replace(/[^0-9]/g, ''), 10)
 
     try {
@@ -81,20 +103,21 @@ export function SubscriptionDialog({ plan, onClose, appsScriptUrl }: Subscriptio
     }
   }
 
-  const inputStyle = {
+  const inputStyle: React.CSSProperties = {
     width: '100%',
-    padding: '0.5rem',
+    padding: isMobile ? '0.65rem' : '0.5rem',
     border: '1px solid #ccc',
     borderRadius: 4,
     fontFamily: "'Space Mono', monospace",
-    fontSize: '0.8rem',
-    boxSizing: 'border-box' as const,
+    fontSize: isMobile ? '1rem' : '0.8rem',
+    boxSizing: 'border-box',
+    WebkitAppearance: 'none',
   }
 
-  const labelStyle = {
-    fontSize: '0.7rem',
-    fontWeight: 700 as const,
-    textTransform: 'uppercase' as const,
+  const labelStyle: React.CSSProperties = {
+    fontSize: isMobile ? '0.7rem' : '0.7rem',
+    fontWeight: 700,
+    textTransform: 'uppercase',
     letterSpacing: '0.1em',
     color: '#555',
     display: 'block',
@@ -106,14 +129,14 @@ export function SubscriptionDialog({ plan, onClose, appsScriptUrl }: Subscriptio
       style={{
         position: 'fixed',
         inset: 0,
-        background: 'rgba(0,0,0,0.5)',
+        background: isMobile ? '#fff' : 'rgba(0,0,0,0.5)',
         display: 'flex',
-        alignItems: 'center',
+        alignItems: isMobile ? 'stretch' : 'center',
         justifyContent: 'center',
         zIndex: 1000,
-        padding: '1rem',
+        padding: isMobile ? 0 : '1rem',
       }}
-      onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+      onClick={(e) => { if (!isMobile && e.target === e.currentTarget) onClose() }}
       role="dialog"
       aria-modal="true"
       aria-label={`Suscripción ${plan.name}`}
@@ -121,20 +144,23 @@ export function SubscriptionDialog({ plan, onClose, appsScriptUrl }: Subscriptio
       <div
         style={{
           background: '#fff',
-          borderRadius: 12,
-          maxWidth: 520,
+          borderRadius: isMobile ? 0 : 12,
+          maxWidth: isMobile ? '100%' : 520,
           width: '100%',
-          maxHeight: '90vh',
+          height: isMobile ? '100%' : 'auto',
+          maxHeight: isMobile ? '100%' : '90vh',
           overflow: 'auto',
-          padding: '2rem',
+          padding: isMobile ? '1rem 1.25rem 2rem' : '2rem',
           fontFamily: "'Space Mono', monospace",
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div>
-            <h2 style={{ margin: 0, fontSize: '1.2rem' }}>{plan.name}</h2>
-            <p style={{ margin: '0.25rem 0', color: '#666', fontSize: '0.8rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <h2 style={{ margin: 0, fontSize: isMobile ? '1.1rem' : '1.2rem' }}>{plan.name}</h2>
+            <p style={{ margin: '0.25rem 0', color: '#666', fontSize: isMobile ? '0.75rem' : '0.8rem' }}>
               {plan.description}
             </p>
           </div>
@@ -146,7 +172,8 @@ export function SubscriptionDialog({ plan, onClose, appsScriptUrl }: Subscriptio
               fontSize: '1.5rem',
               cursor: 'pointer',
               color: '#999',
-              padding: '0.25rem',
+              padding: '0.25rem 0 0.25rem 0.5rem',
+              flexShrink: 0,
             }}
             aria-label="Cerrar"
           >
@@ -155,15 +182,15 @@ export function SubscriptionDialog({ plan, onClose, appsScriptUrl }: Subscriptio
         </div>
 
         {/* Details chips */}
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', margin: '1rem 0' }}>
+        <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', margin: '0.75rem 0' }}>
           {plan.details.map((d) => (
             <span
               key={d}
               style={{
                 background: '#f0ede8',
-                padding: '0.25rem 0.75rem',
+                padding: '0.2rem 0.6rem',
                 borderRadius: 20,
-                fontSize: '0.7rem',
+                fontSize: '0.65rem',
               }}
             >
               {d}
@@ -171,13 +198,13 @@ export function SubscriptionDialog({ plan, onClose, appsScriptUrl }: Subscriptio
           ))}
         </div>
 
-        <p style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0.5rem 0 1.5rem' }}>
+        <p style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 1rem' }}>
           {plan.price}
         </p>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} style={{ flex: 1 }}>
           {/* Plan configuration */}
-          <h3 style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#888', borderBottom: '1px solid #eee', paddingBottom: '0.5rem' }}>
+          <h3 style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#888', borderBottom: '1px solid #eee', paddingBottom: '0.5rem', marginTop: 0 }}>
             Configura tu plan
           </h3>
 
@@ -197,7 +224,7 @@ export function SubscriptionDialog({ plan, onClose, appsScriptUrl }: Subscriptio
             </select>
           </div>
 
-          <div style={{ marginBottom: '1.5rem' }}>
+          <div style={{ marginBottom: '1.25rem' }}>
             <label style={labelStyle}>Frecuencia</label>
             <select style={inputStyle} value={frequency} onChange={(e) => setFrequency(Number(e.target.value))}>
               {frequencies.map((f) => <option key={f} value={f}>{FREQUENCY_LABELS[f]}</option>)}
@@ -205,42 +232,42 @@ export function SubscriptionDialog({ plan, onClose, appsScriptUrl }: Subscriptio
           </div>
 
           {/* Shipping data */}
-          <h3 style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#888', borderBottom: '1px solid #eee', paddingBottom: '0.5rem' }}>
+          <h3 style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#888', borderBottom: '1px solid #eee', paddingBottom: '0.5rem', marginTop: 0 }}>
             Datos de envío
           </h3>
 
           <div style={{ marginBottom: '0.75rem' }}>
             <label style={labelStyle}>Nombre</label>
-            <input style={inputStyle} type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} required minLength={3} placeholder="Tu nombre completo" />
+            <input style={inputStyle} type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} required minLength={3} placeholder="Tu nombre completo" autoComplete="name" />
           </div>
 
           <div style={{ marginBottom: '0.75rem' }}>
             <label style={labelStyle}>Email</label>
-            <input style={inputStyle} type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="tu@email.com" />
+            <input style={inputStyle} type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="tu@email.com" autoComplete="email" />
           </div>
 
           <div style={{ marginBottom: '0.75rem' }}>
             <label style={labelStyle}>Teléfono</label>
-            <input style={inputStyle} type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required minLength={7} placeholder="+573001234567" />
+            <input style={inputStyle} type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required minLength={7} placeholder="+573001234567" autoComplete="tel" />
           </div>
 
           <div style={{ marginBottom: '0.75rem' }}>
             <label style={labelStyle}>Dirección</label>
-            <input style={inputStyle} type="text" value={address} onChange={(e) => setAddress(e.target.value)} required minLength={5} placeholder="Calle 10 #40-20, Apto 601" />
+            <input style={inputStyle} type="text" value={address} onChange={(e) => setAddress(e.target.value)} required minLength={5} placeholder="Calle 10 #40-20, Apto 601" autoComplete="street-address" />
           </div>
 
           <div style={{ marginBottom: '0.75rem' }}>
             <label style={labelStyle}>Ciudad</label>
-            <input style={inputStyle} type="text" value={city} onChange={(e) => setCity(e.target.value)} required />
+            <input style={inputStyle} type="text" value={city} onChange={(e) => setCity(e.target.value)} required autoComplete="address-level2" />
           </div>
 
-          <div style={{ marginBottom: '1.5rem' }}>
+          <div style={{ marginBottom: '1.25rem' }}>
             <label style={labelStyle}>Notas de entrega</label>
-            <textarea style={{ ...inputStyle, minHeight: 60, resize: 'vertical' }} value={deliveryNotes} onChange={(e) => setDeliveryNotes(e.target.value)} placeholder="Portería, dejar con vigilante..." />
+            <textarea style={{ ...inputStyle, minHeight: 50, resize: 'vertical' }} value={deliveryNotes} onChange={(e) => setDeliveryNotes(e.target.value)} placeholder="Portería, dejar con vigilante..." />
           </div>
 
           {error && (
-            <p style={{ color: '#d32f2f', fontSize: '0.8rem', marginBottom: '1rem' }}>{error}</p>
+            <p style={{ color: '#d32f2f', fontSize: '0.8rem', marginBottom: '0.75rem' }}>{error}</p>
           )}
 
           <button
@@ -248,17 +275,18 @@ export function SubscriptionDialog({ plan, onClose, appsScriptUrl }: Subscriptio
             disabled={submitting}
             style={{
               width: '100%',
-              padding: '0.75rem',
+              padding: isMobile ? '0.85rem' : '0.75rem',
               background: submitting ? '#999' : '#1a1a1a',
               color: '#fff',
               border: 'none',
               borderRadius: 6,
               fontFamily: "'Space Mono', monospace",
-              fontSize: '0.85rem',
+              fontSize: isMobile ? '0.9rem' : '0.85rem',
               fontWeight: 700,
               textTransform: 'uppercase',
               letterSpacing: '0.1em',
               cursor: submitting ? 'wait' : 'pointer',
+              marginBottom: isMobile ? 'env(safe-area-inset-bottom, 0)' : 0,
             }}
           >
             {submitting ? 'Procesando...' : 'Activar suscripción'}
