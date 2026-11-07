@@ -19,8 +19,9 @@ var TEAM_EMAIL = PROPS.getProperty("TEAM_EMAIL") || "team@salentino.co";
  * @returns {Object|null}
  */
 function findSubscriberByEmail(email) {
+  var safeEmail = String(email).replace(/'/g, "\\'");
   var url = BASE_URL + "/Suscriptores"
-    + "?filterByFormula=" + encodeURIComponent("{Email}='" + email + "'")
+    + "?filterByFormula=" + encodeURIComponent("{Email}='" + safeEmail + "'")
     + "&maxRecords=1";
 
   var response = UrlFetchApp.fetch(url, {
@@ -40,8 +41,9 @@ function findSubscriberByEmail(email) {
  * @returns {Object|null}
  */
 function findDespachoByPaymentId(paymentId) {
+  var safeId = String(paymentId).replace(/'/g, "\\'");
   var url = BASE_URL + "/Despachos"
-    + "?filterByFormula=" + encodeURIComponent("{MP Payment ID}='" + paymentId + "'")
+    + "?filterByFormula=" + encodeURIComponent("{MP Payment ID}='" + safeId + "'")
     + "&maxRecords=1";
 
   var response = UrlFetchApp.fetch(url, {
@@ -69,7 +71,7 @@ function createDespacho(subscriber, payment) {
     "Estado despacho": "Por despachar",
   };
 
-  UrlFetchApp.fetch(BASE_URL + "/Despachos", {
+  var response = UrlFetchApp.fetch(BASE_URL + "/Despachos", {
     method: "post",
     headers: {
       "Authorization": "Bearer " + AIRTABLE_PAT,
@@ -78,6 +80,10 @@ function createDespacho(subscriber, payment) {
     payload: JSON.stringify({ fields: fields }),
     muteHttpExceptions: true,
   });
+
+  if (response.getResponseCode() !== 200) {
+    throw new Error("Failed to create despacho: " + response.getContentText());
+  }
 }
 
 /**
@@ -86,7 +92,7 @@ function createDespacho(subscriber, payment) {
  * @param {string} status
  */
 function updateSubscriberStatus(recordId, status) {
-  UrlFetchApp.fetch(BASE_URL + "/Suscriptores/" + recordId, {
+  var response = UrlFetchApp.fetch(BASE_URL + "/Suscriptores/" + recordId, {
     method: "patch",
     headers: {
       "Authorization": "Bearer " + AIRTABLE_PAT,
@@ -95,6 +101,10 @@ function updateSubscriberStatus(recordId, status) {
     payload: JSON.stringify({ fields: { "Estado": status } }),
     muteHttpExceptions: true,
   });
+
+  if (response.getResponseCode() !== 200) {
+    console.error("Failed to update subscriber status: " + response.getContentText());
+  }
 }
 
 /**

@@ -31,9 +31,11 @@ export async function submitSubscription(
   const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS)
 
   try {
+    // Use text/plain to avoid CORS preflight with Apps Script
+    // Apps Script parses JSON from e.postData.contents regardless of Content-Type
     const response = await fetch(appsScriptUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify(payload),
       signal: controller.signal,
     })

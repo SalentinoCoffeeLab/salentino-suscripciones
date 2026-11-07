@@ -17,8 +17,9 @@ var BASE_URL = "https://api.airtable.com/v0/" + AIRTABLE_BASE_ID;
  * @returns {Object|null} Airtable record or null
  */
 function findSubscriberByEmail(email) {
+  var safeEmail = String(email).replace(/'/g, "\\'");
   var url = BASE_URL + "/Suscriptores"
-    + "?filterByFormula=" + encodeURIComponent("{Email}='" + email + "'")
+    + "?filterByFormula=" + encodeURIComponent("{Email}='" + safeEmail + "'")
     + "&maxRecords=1";
 
   var response = UrlFetchApp.fetch(url, {

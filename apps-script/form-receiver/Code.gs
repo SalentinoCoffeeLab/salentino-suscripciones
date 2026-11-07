@@ -16,6 +16,14 @@ function doPost(e) {
   try {
     var payload = JSON.parse(e.postData.contents);
 
+    // Server-side validation
+    var validationError = _validatePayload(payload);
+    if (validationError) {
+      return ContentService.createTextOutput(
+        JSON.stringify({ status: "error", message: validationError })
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+
     var record = {
       "Nombre": payload.fullName || "",
       "Email": payload.email || "",
@@ -38,19 +46,11 @@ function doPost(e) {
     return ContentService.createTextOutput(JSON.stringify({ status: "ok" }))
       .setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
+    console.error("doPost error: " + err.message);
     return ContentService.createTextOutput(
-      JSON.stringify({ status: "error", message: err.message })
+      JSON.stringify({ status: "error", message: "Error procesando suscripción" })
     ).setMimeType(ContentService.MimeType.JSON);
   }
-}
-
-/**
- * Handle OPTIONS requests for CORS preflight.
- * @returns {TextOutput} Empty response with CORS headers
- */
-function doOptions() {
-  var output = ContentService.createTextOutput("");
-  return output;
 }
 
 /**
@@ -61,4 +61,43 @@ function doOptions() {
 function _frequencyLabel(freq) {
   var map = { 7: "Semanal", 14: "Quincenal", 30: "Mensual" };
   return map[freq] || String(freq);
+}
+
+/**
+ * Validate incoming payload fields.
+ * @param {Object} payload
+ * @returns {string|null} Error message or null if valid
+ */
+function _validatePayload(payload) {
+  if (!payload.email || payload.email.indexOf("@") === -1) {
+    return "Email inválido";
+  }
+  if (!payload.fullName || payload.fullName.length < 3) {
+    return "Nombre requerido (mínimo 3 caracteres)";
+  }
+  if (!payload.phone || payload.phone.length < 7) {
+    return "Teléfono requerido (mínimo 7 dígitos)";
+  }
+
+  var validTypes = ["Suministro", "Lab Series"];
+  if (validTypes.indexOf(payload.subscriptionType) === -1) {
+    return "Tipo de suscripción inválido";
+  }
+
+  var validPlans = ["Medio", "Familiar", "Abastecimiento", "Discovery", "Ritual", "Contraste"];
+  if (validPlans.indexOf(payload.plan) === -1) {
+    return "Plan inválido";
+  }
+
+  var validGrinds = ["Grano", "V60", "Aeropress", "Espresso", "Prensa Francesa"];
+  if (validGrinds.indexOf(payload.grind) === -1) {
+    return "Molienda inválida";
+  }
+
+  var validFrequencies = [7, 14, 30, "7", "14", "30", "Semanal", "Quincenal", "Mensual"];
+  if (validFrequencies.indexOf(payload.frequency) === -1) {
+    return "Frecuencia inválida";
+  }
+
+  return null;
 }
