@@ -168,15 +168,17 @@ export function StepEntrega({
   const ctaText = loading
     ? 'Guardando tus datos…'
     : allValid
-      ? `Activar mi primer envío · ${formatPrice(monthly)}/mes`
+      ? `Agregar tarjeta y pagar ${formatPrice(monthly)}/mes`
       : 'Completa tus datos'
 
   return (
     <>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700 }}>Datos de entrega</h1>
+        <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700 }}>
+          Datos de <span style={{ color: 'var(--accent)' }}>entrega</span>
+        </h1>
         <p style={{ margin: 0, maxWidth: 520, fontSize: 16, lineHeight: 1.5, color: 'var(--text)' }}>
-          Dónde llega tu café. Usamos tu celular solo para avisarte cuando sale el pedido.
+          Dónde llega tu café. Usamos tu celular solo para avisarte cuando sale cada entrega.
         </p>
       </div>
 
@@ -307,7 +309,7 @@ export function StepEntrega({
         </div>
 
         <span style={{ fontSize: 12, color: 'var(--text)' }}>
-          Domicilio incluido en Medellín y el Área Metropolitana. Consulta cobertura para otras ciudades.
+          Domicilio incluido en Medellín y el Área Metropolitana. ¿Otra ciudad? Escríbenos por WhatsApp y te contamos el envío.
         </span>
       </fieldset>
 
@@ -363,6 +365,40 @@ export function StepEntrega({
         )}
       </fieldset>
 
+      {/* Authorizations */}
+      <fieldset className="fs">
+        <legend><b>D</b>AUTORIZACIONES</legend>
+        <label style={{ display: 'flex', gap: 12, alignItems: 'flex-start', fontSize: 13.5, lineHeight: 1.5, cursor: 'pointer' }}>
+          <input type="checkbox" checked disabled style={{ width: 20, height: 20, accentColor: 'var(--accent)', marginTop: 1, flexShrink: 0 }} />
+          <span>Acepto la política de tratamiento de datos. <span style={{ color: 'var(--text)' }}>(obligatoria)</span></span>
+        </label>
+        <label style={{ display: 'flex', gap: 12, alignItems: 'flex-start', fontSize: 13.5, lineHeight: 1.5, cursor: 'pointer' }}>
+          <input type="checkbox" style={{ width: 20, height: 20, accentColor: 'var(--accent)', marginTop: 1, flexShrink: 0 }} />
+          <span>Quiero recibir lotes nuevos y novedades por WhatsApp. <span style={{ color: 'var(--text)' }}>(opcional)</span></span>
+        </label>
+      </fieldset>
+
+      {/* What happens next */}
+      <div style={{ background: 'var(--card)', borderRadius: 20, padding: '22px 24px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--accent)' }}>
+          Qué pasa después
+        </span>
+        <ol style={{ margin: 0, padding: 0, listStyle: 'none', counterReset: 'n', display: 'grid', gap: 10 }}>
+          {[
+            { bold: 'Agregas tu tarjeta en Mercado Pago.', rest: ' Ahí mismo autorizas el cobro mensual.' },
+            { bold: 'Despachamos en 1–2 días hábiles.', rest: ' En Medellín y el Área Metropolitana llega en 24–48 h.' },
+            ...(freqDays === 15 ? [{ bold: 'La segunda entrega sale 15 días después.', rest: ' Te avisamos por WhatsApp cada vez.' }] : []),
+          ].map((item, i) => (
+            <li key={i} style={{ position: 'relative', paddingLeft: 32, fontSize: 13.5, lineHeight: 1.5 }}>
+              <span style={{ position: 'absolute', left: 0, top: 0, color: 'var(--accent)', fontWeight: 700 }}>
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <b>{item.bold}</b>{item.rest}
+            </li>
+          ))}
+        </ol>
+      </div>
+
       {error && (
         <span role="alert" className="pop" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 6, fontSize: 13, color: 'var(--error)', fontWeight: 700 }}>
           {error}
@@ -406,44 +442,25 @@ export function StepEntrega({
           style={{ gap: 10, padding: '0 30px' }}
         >
           {ctaText}
-          <span className="ic" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M5 12h14M13 6l6 6-6 6" />
-            </svg>
-          </span>
         </button>
       </div>
 
-      {/* Trust badges */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px 20px', alignItems: 'center' }}>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--text)' }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
-          </svg>
-          Datos encriptados
-        </span>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--text)' }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-          </svg>
-          Cobro vía Mercado Pago
-        </span>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--text)' }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" />
-          </svg>
-          Pausa o cancela sin penalidad
-        </span>
-      </div>
-
       <span style={{ fontSize: 12, lineHeight: 1.5, color: 'var(--text)' }}>
-        {/* Los planes de MP cobran una vez al mes, también los quincenales (2 entregas por cobro). */}
         Se debitan {formatPrice(monthly)} una vez al mes con Mercado Pago
         {freqDays === 15 ? `, y cubren tus 2 entregas (${freqLabel.toLowerCase()}).` : '.'} No guardamos datos de tu tarjeta.
       </span>
-      <span style={{ fontSize: 11, lineHeight: 1.5, color: 'var(--text)' }}>
-        Al continuar aceptas el tratamiento de tus datos personales y recibir avisos de entrega por WhatsApp y email.
-      </span>
+
+      {/* Trust badges */}
+      <p style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 20px', margin: 0, fontSize: 12, color: 'var(--text)' }}>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" />
+          </svg>
+          Cobro con Mercado Pago
+        </span>
+        <span>Pausa o cancela por WhatsApp</span>
+        <span>Sin penalidad</span>
+      </p>
     </>
   )
 }

@@ -26,8 +26,6 @@ describe('SALENTINO_PLANS', () => {
     SALENTINO_PLANS.forEach(plan => {
       if (plan.line === 'diario') {
         expect(plan.frequencies).toEqual([15, 30])
-      } else if (plan.id === 'especial-250') {
-        expect(plan.frequencies).toEqual([15, 30])
       } else {
         expect(plan.frequencies).toEqual([30])
       }
@@ -77,9 +75,8 @@ describe('getCheckoutUrl', () => {
     expect(getCheckoutUrl('especial-500', 15)).toBeUndefined()
   })
 
-  test('returns URL for especial-250 quincenal', () => {
-    const url = getCheckoutUrl('especial-250', 15)
-    expect(url).toContain('mpago.la')
+  test('returns undefined for especial-250 quincenal (mensual only)', () => {
+    expect(getCheckoutUrl('especial-250', 15)).toBeUndefined()
   })
 
   test('returns URL for especial-250 mensual', () => {

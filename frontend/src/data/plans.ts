@@ -6,6 +6,8 @@ export interface CoffeePlan {
   description: string
   weight: string
   priceFrom: number
+  /** Precio de la misma bolsa comprada suelta en la tienda + envío estándar Medellín ($15.000) */
+  retailWithShipping: number
   frequencies: number[]
   meta: string[]
   image: string
@@ -21,6 +23,7 @@ export const SALENTINO_PLANS: CoffeePlan[] = [
     description: 'Perfil fijo · Alto rendimiento',
     weight: '454g',
     priceFrom: 72000,
+    retailWithShipping: 79000,  // $64.000 bolsa + $15.000 envío
     frequencies: [15, 30],
     meta: ['RENDIMIENTO: ~30 tazas', 'PERFIL: Caturra Lavado Tradicional'],
     image: '/assets/plan-454g.webp',
@@ -34,6 +37,7 @@ export const SALENTINO_PLANS: CoffeePlan[] = [
     description: 'Perfil fijo · Alto rendimiento',
     weight: '1kg',
     priceFrom: 115000,
+    retailWithShipping: 135000,  // $120.000 bolsa + $15.000 envío
     frequencies: [15, 30],
     meta: ['RENDIMIENTO: ~66 tazas', 'PERFIL: Caturra Lavado Tradicional'],
     image: '/assets/plan-1kg.webp',
@@ -47,7 +51,8 @@ export const SALENTINO_PLANS: CoffeePlan[] = [
     description: 'Micro-lotes y varietales rotativos',
     weight: '250g',
     priceFrom: 80000,
-    frequencies: [15, 30],
+    retailWithShipping: 95000,  // $80.000 bolsa + $15.000 envío
+    frequencies: [30],
     meta: ['RENDIMIENTO: ~16 tazas', 'ROTACIÓN: 1 perfil exclusivo por entrega'],
     image: '/assets/plan-lab-250g.webp',
     cupsPerShipment: 16,
@@ -60,6 +65,7 @@ export const SALENTINO_PLANS: CoffeePlan[] = [
     description: 'Micro-lotes y varietales rotativos',
     weight: '500g',
     priceFrom: 160000,
+    retailWithShipping: 175000,  // $160.000 (2×$80.000) + $15.000 envío
     frequencies: [30],
     meta: ['RENDIMIENTO: ~33 tazas', 'ROTACIÓN: 2 perfiles distintos por entrega'],
     image: '/assets/plan-lab-2x250g.webp',
@@ -70,7 +76,7 @@ export const SALENTINO_PLANS: CoffeePlan[] = [
 const PLAN_KEY_MAP: Record<string, { prefix: string; frequencies: number[] }> = {
   'diario-454': { prefix: 'diario_454', frequencies: [15, 30] },
   'diario-1kg': { prefix: 'diario_1kg', frequencies: [15, 30] },
-  'especial-250': { prefix: 'especial_250', frequencies: [15, 30] },
+  'especial-250': { prefix: 'especial_250', frequencies: [30] },
   'especial-500': { prefix: 'especial_500', frequencies: [30] },
 }
 
@@ -265,13 +271,12 @@ export const LINE_INFO: Record<string, LineInfo> = {
     key: 'diario',
     name: 'Café de diario',
     code: 'SUM',
-    kicker: 'PERFIL FIJO / MDE — COL',
-    from: 'Desde $70.000 por entrega',
+    kicker: 'PERFIL FIJO',
+    from: 'Desde $70.000/entrega',
     meta: [
-      'CAFÉ: Caturra Lavado Tradicional',
       'ORIGEN: Salento, Quindío',
       'NOTAS: Chocolate amargo, caramelo, panela',
-      'PERFIL: el mismo en cada entrega',
+      'TAMAÑOS: 454 g o 1 kg por entrega',
     ],
     coffee: 'Caturra Lavado Tradicional',
   },
@@ -279,13 +284,12 @@ export const LINE_INFO: Record<string, LineInfo> = {
     key: 'especial',
     name: 'Ediciones especiales',
     code: 'LAB',
-    kicker: 'ROTATIVO / MICRO-LOTES',
-    from: 'Desde $80.000 por entrega',
+    kicker: 'ROTATIVO · MICRO-LOTES',
+    from: 'Desde $80.000/entrega',
     meta: [
-      'CAFÉ: micro-lotes y varietales',
-      'ORIGEN: rota entre los lotes disponibles',
-      'NOTAS: cada bolsa llega con su nota de cata',
-      'PERFIL: cambia en cada entrega',
+      'ORIGEN: Rota entre los lotes disponibles',
+      'NOTAS: Llegan escritas con cada bolsa',
+      'TAMAÑOS: 1 o 2 bolsas de 250 g',
     ],
     coffee: 'Selección del tostador',
   },

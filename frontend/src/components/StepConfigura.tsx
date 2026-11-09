@@ -75,11 +75,13 @@ export function StepConfigura({
   return (
     <>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700 }}>Configura tu plan</h1>
+        <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700 }}>
+          Configura tu <span style={{ color: 'var(--accent)' }}>plan</span>
+        </h1>
         <p style={{ margin: 0, maxWidth: 520, fontSize: 16, lineHeight: 1.5, color: 'var(--text)' }}>
           {line === 'especial'
-            ? 'El tostador elige el café. Tú decides cuánto, cada cuánto y cómo lo mueles.'
-            : 'Siempre nuestro Caturra Lavado. Tú decides cuánto, cada cuánto y cómo lo mueles.'}
+            ? 'El tostador elige el café. Tú decides cuánto, cada cuánto y cómo lo molemos.'
+            : 'Siempre nuestro Caturra Lavado Tradicional. Tú decides cuánto, cada cuánto y cómo lo molemos.'}
         </p>
       </div>
 
@@ -160,7 +162,7 @@ export function StepConfigura({
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         <span className="sec-label">Molienda</span>
         <span style={{ fontSize: 13, color: 'var(--text)', marginTop: -4 }}>
-          Lo molemos para tu método. Si tienes molino, elige Grano entero.
+          La molemos justo para tu método. Si tienes molino en casa, elige grano entero.
         </span>
         <div
           role="radiogroup"
@@ -219,14 +221,9 @@ export function StepConfigura({
           className="btn"
           onClick={handleContinue}
           disabled={!allReady}
-          style={{ gap: 10, padding: '0 30px' }}
+          style={{ padding: '0 30px' }}
         >
-          Continuar
-          <span className="ic" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M5 12h14M13 6l6 6-6 6" />
-            </svg>
-          </span>
+          Continuar a entrega
         </button>
       </div>
     </>
