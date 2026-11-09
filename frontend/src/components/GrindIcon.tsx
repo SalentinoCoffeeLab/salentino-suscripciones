@@ -34,6 +34,16 @@ export function GrindIcon({ id }: GrindIconProps) {
           <path d="M9 21.5h6" />
         </svg>
       )
+    case 'cafetera':
+      return (
+        <svg {...props}>
+          <path d="M7 8h10v10a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2z" />
+          <path d="M17 10.5h1.5a1.5 1.5 0 0 1 0 3H17" />
+          <path d="M5 8h14" />
+          <path d="M10 4v4M14 4v4" />
+          <path d="M10 4h4" />
+        </svg>
+      )
     case 'v60':
       return (
         <svg {...props}>

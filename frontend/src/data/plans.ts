@@ -241,6 +241,7 @@ export const GRIND_OPTIONS: GrindOption[] = [
   { id: 'grano', label: 'Grano entero', sub: 'Sin moler' },
   { id: 'prensa', label: 'Prensa', sub: 'Gruesa' },
   { id: 'aeropress', label: 'Aeropress', sub: 'Media' },
+  { id: 'cafetera', label: 'Cafetera', sub: 'Media — goteo / eléctrica' },
   { id: 'v60', label: 'V60 / filtro', sub: 'Media-fina' },
   { id: 'espresso', label: 'Espresso', sub: 'Fina' },
 ]
