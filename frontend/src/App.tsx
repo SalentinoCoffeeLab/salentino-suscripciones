@@ -91,6 +91,7 @@ function Stepper({ current, canReach, onGo }: {
               type="button"
               onClick={() => { if (reachable && n !== current) onGo(n) }}
               disabled={!reachable}
+              className={reachable && n !== current ? 'step-link' : undefined}
               style={{
                 textAlign: 'left', border: 0, background: 'transparent', padding: 0,
                 minHeight: 28, fontFamily: 'inherit', fontSize: 13, fontWeight: 700,
@@ -99,7 +100,7 @@ function Stepper({ current, canReach, onGo }: {
                 color: isCurrent || done ? '#0A0A0A' : '#8C8279',
               }}
             >
-              {label}{done ? ' \u2713' : ''}
+              {label}{done ? ' ✓ editar' : ''}
             </button>
           </li>
         )
@@ -214,36 +215,53 @@ function Sidebar({ state }: { state: FlowState }) {
 
 /* ── Mobile Bottom Bar ── */
 
-function MobileBar({ state, show }: { state: FlowState; show: boolean }) {
+function MobileBar({ state, show, onBack }: { state: FlowState; show: boolean; onBack: () => void }) {
   if (!show) return null
 
   const plan = state.planId ? getPlanById(state.planId) : null
   const monthly = plan && state.freqDays ? getMonthlyPrice(plan.id, state.freqDays) ?? 0 : 0
 
-  const mobileLine =
-    state.step === 1 ? 'Elige tu café para empezar.'
-    : state.step === 2 ? 'Elige tazas al día y molienda.'
-    : 'Completa tus datos y paga en Mercado Pago.'
+  const backLabel =
+    state.step === 2 ? '← Café'
+    : state.step === 3 ? '← Configura'
+    : null
 
   return (
     <div
       className="only-m"
       style={{
         position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 5,
-        flexDirection: 'column', gap: 4,
+        flexDirection: 'column', gap: 6,
         background: '#0A0A0A', color: '#FFFFFF',
         borderRadius: '18px 18px 0 0', padding: '14px 18px 20px',
       }}
     >
-      <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8 }}>
-        <span style={{ fontSize: 12, fontWeight: 700 }}>
-          {plan ? plan.name : 'Tu café'} · Total al mes
-        </span>
-        <span className="pop" style={{ fontSize: 20, fontWeight: 700, color: '#EC6E25' }}>
-          {monthly ? formatPrice(monthly) : '—'}
+      <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+        {backLabel ? (
+          <button
+            type="button"
+            onClick={onBack}
+            style={{
+              border: '1px solid rgba(255,255,255,.3)', background: 'transparent',
+              color: '#FFFFFF', fontSize: 11, fontWeight: 700, fontFamily: 'inherit',
+              letterSpacing: '0.04em', borderRadius: 20, padding: '5px 12px',
+              cursor: 'pointer',
+            }}
+          >
+            {backLabel}
+          </button>
+        ) : (
+          <span style={{ fontSize: 12, fontWeight: 700 }}>
+            {plan ? plan.name : 'Tu café'}
+          </span>
+        )}
+        <span style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+          <span style={{ fontSize: 11, opacity: 0.7 }}>Total/mes</span>
+          <span className="pop" style={{ fontSize: 20, fontWeight: 700, color: '#EC6E25' }}>
+            {monthly ? formatPrice(monthly) : '—'}
+          </span>
         </span>
       </span>
-      <span style={{ fontSize: 11, opacity: 0.85 }}>{mobileLine}</span>
     </div>
   )
 }
@@ -252,7 +270,7 @@ function MobileBar({ state, show }: { state: FlowState; show: boolean }) {
 
 function scrollTop() {
   setTimeout(() => {
-    try { window.scrollTo({ top: 0, behavior: 'auto' }) } catch { /* noop */ }
+    try { window.scrollTo({ top: 0, behavior: 'smooth' }) } catch { /* noop */ }
   }, 30)
 }
 
@@ -294,8 +312,14 @@ function App() {
         maxWidth: 1240, margin: '0 auto', padding: '24px 24px 140px',
         boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 26,
       }}>
-        {/* Stepper */}
-        <Stepper current={state.step} canReach={canReach} onGo={goStep} />
+        {/* Stepper — sticky so user can always navigate */}
+        <div style={{
+          position: 'sticky', top: 0, zIndex: 10,
+          background: 'var(--bg)', margin: '0 -24px', padding: '16px 24px 12px',
+          borderBottom: '1px solid var(--line)',
+        }}>
+          <Stepper current={state.step} canReach={canReach} onGo={goStep} />
+        </div>
 
         {/* Main content */}
         <div className="cols">
@@ -347,7 +371,11 @@ function App() {
       </div>
 
       {/* Mobile bottom bar */}
-      <MobileBar state={state} show={!typing} />
+      <MobileBar
+        state={state}
+        show={!typing}
+        onBack={() => { if (state.step > 1) goStep((state.step - 1) as 1 | 2 | 3) }}
+      />
     </div>
   )
 }

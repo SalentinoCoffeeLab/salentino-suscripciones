@@ -89,6 +89,9 @@ textarea.inp { min-height: 70px; line-height: 1.5; }
   box-shadow: 0 16px 36px rgba(236,110,37,.35), 0 6px 12px rgba(236,110,37,.2);
 }
 
+/* Stepper clickable steps */
+.step-link:hover { text-decoration: underline; color: var(--accent) !important; }
+
 /* Title */
 .ttl {
   margin: 0; font-size: 64px; line-height: .95; font-weight: 700;
