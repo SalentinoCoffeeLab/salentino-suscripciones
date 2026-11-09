@@ -46,8 +46,8 @@ export const SALENTINO_PLANS: CoffeePlan[] = [
     name: '1 bolsa',
     description: 'Micro-lotes y varietales rotativos',
     weight: '250g',
-    priceFrom: 180000,
-    frequencies: [15],
+    priceFrom: 80000,
+    frequencies: [15, 30],
     meta: ['RENDIMIENTO: ~16 tazas', 'ROTACIÓN: 1 perfil exclusivo por entrega'],
     image: '/assets/plan-lab-250g.webp',
     cupsPerShipment: 16,
@@ -70,7 +70,7 @@ export const SALENTINO_PLANS: CoffeePlan[] = [
 const PLAN_KEY_MAP: Record<string, { prefix: string; frequencies: number[] }> = {
   'diario-454': { prefix: 'diario_454', frequencies: [15, 30] },
   'diario-1kg': { prefix: 'diario_1kg', frequencies: [15, 30] },
-  'especial-250': { prefix: 'especial_250', frequencies: [15] },
+  'especial-250': { prefix: 'especial_250', frequencies: [15, 30] },
   'especial-500': { prefix: 'especial_500', frequencies: [30] },
 }
 
@@ -80,6 +80,7 @@ const MP_LOOKUP: Record<string, { checkoutUrl: string; monthlyPrice: number }> =
   diario_1kg_15: { checkoutUrl: 'https://mpago.la/2qFkE4a', monthlyPrice: 230000 },
   diario_1kg_30: { checkoutUrl: 'https://mpago.la/1gzdvvs', monthlyPrice: 115000 },
   especial_250_15: { checkoutUrl: 'https://mpago.la/1fUumqj', monthlyPrice: 180000 },
+  especial_250_30: { checkoutUrl: 'PENDING_MP_LINK', monthlyPrice: 80000 },
   especial_500_30: { checkoutUrl: 'https://mpago.la/1LmZd4D', monthlyPrice: 160000 },
 }
 
