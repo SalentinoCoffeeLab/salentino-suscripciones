@@ -75,7 +75,6 @@ export function StepConfigura({
   onContinue,
 }: StepConfiguraProps) {
   const [cups, setCups] = useState<string | null>(null)
-  const [showCustom, setShowCustom] = useState(false)
   const [tried, setTried] = useState(false)
 
   const plans = getPlansForLine(line)
@@ -195,87 +194,68 @@ export function StepConfigura({
           </span>
         )}
 
-        <button
-          type="button"
-          className="lnk"
-          onClick={() => setShowCustom(!showCustom)}
-          aria-expanded={showCustom}
-          style={{
-            alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', gap: 4,
-            minHeight: 44, fontSize: 12, fontWeight: 700, textDecoration: 'underline',
-            border: 0, background: 'transparent', cursor: 'pointer', padding: 0,
-          }}
+        <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.06em', marginTop: 4 }}>CANTIDAD POR ENTREGA</span>
+        <div
+          role="radiogroup"
+          aria-label="Cantidad"
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 10 }}
         >
-          {showCustom ? 'Ocultar cantidad y frecuencia' : 'Prefiero elegir cantidad y frecuencia'}
-          <span className="ic" aria-hidden="true">→</span>
-        </button>
+          {plans.map((plan) => {
+            const isActive = selectedPlanId === plan.id
+            const perShipment = plan.line === 'diario'
+              ? formatPrice(getMonthlyPrice(plan.id, 30) ?? plan.priceFrom)
+              : formatPrice(plan.priceFrom)
+            return (
+              <button
+                key={plan.id}
+                type="button"
+                role="radio"
+                className="pill2"
+                onClick={() => handleQtyPick(plan)}
+                aria-checked={isActive}
+                style={pillStyle(isActive)}
+              >
+                <span>{plan.name}</span>
+                <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'none', letterSpacing: 0, color: isActive ? '#EC6E25' : 'inherit' }}>
+                  {perShipment}/entrega
+                </span>
+              </button>
+            )
+          })}
+        </div>
 
-        {showCustom && (
-          <div className="pop" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.06em' }}>CANTIDAD POR ENTREGA</span>
-            <div
-              role="radiogroup"
-              aria-label="Cantidad"
-              style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 10 }}
-            >
-              {plans.map((plan) => {
-                const isActive = selectedPlanId === plan.id
-                const perShipment = plan.line === 'diario'
-                  ? formatPrice(getMonthlyPrice(plan.id, 30) ?? plan.priceFrom)
-                  : formatPrice(plan.priceFrom)
-                return (
-                  <button
-                    key={plan.id}
-                    type="button"
-                    role="radio"
-                    className="pill2"
-                    onClick={() => handleQtyPick(plan)}
-                    aria-checked={isActive}
-                    style={pillStyle(isActive)}
-                  >
-                    <span>{plan.name}</span>
-                    <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'none', letterSpacing: 0, color: isActive ? '#EC6E25' : 'inherit' }}>
-                      {perShipment}/entrega
-                    </span>
-                  </button>
-                )
-              })}
-            </div>
-
-            <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.06em' }}>FRECUENCIA</span>
-            <div
-              role="radiogroup"
-              aria-label="Frecuencia"
-              style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 10 }}
-            >
-              {freqs.map((freq) => {
-                const isActive = selectedFreqId === freq.id
-                const hasPlan = selectedPlan ? selectedPlan.frequencies.includes(freq.days) : true
-                return (
-                  <button
-                    key={freq.id}
-                    type="button"
-                    role="radio"
-                    className="pill2"
-                    onClick={() => handleFreqPick(freq)}
-                    aria-checked={isActive}
-                    disabled={!hasPlan}
-                    style={{
-                      ...pillStyle(isActive),
-                      opacity: hasPlan ? 1 : 0.4,
-                      cursor: hasPlan ? 'pointer' : 'not-allowed',
-                    }}
-                  >
-                    <span>{freq.label}</span>
-                    <span style={{ fontSize: 10, fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>
-                      {freq.deliveriesPerMonth} entrega{freq.deliveriesPerMonth > 1 ? 's' : ''} al mes
-                    </span>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        )}
+        <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.06em' }}>FRECUENCIA</span>
+        <div
+          role="radiogroup"
+          aria-label="Frecuencia"
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 10 }}
+        >
+          {freqs.map((freq) => {
+            const isActive = selectedFreqId === freq.id
+            const hasPlan = selectedPlan ? selectedPlan.frequencies.includes(freq.days) : true
+            return (
+              <button
+                key={freq.id}
+                type="button"
+                role="radio"
+                className="pill2"
+                onClick={() => handleFreqPick(freq)}
+                aria-checked={isActive}
+                disabled={!hasPlan}
+                style={{
+                  ...pillStyle(isActive),
+                  opacity: hasPlan ? 1 : 0.4,
+                  cursor: hasPlan ? 'pointer' : 'not-allowed',
+                }}
+              >
+                <span>{freq.label}</span>
+                <span style={{ fontSize: 10, fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>
+                  {freq.deliveriesPerMonth} entrega{freq.deliveriesPerMonth > 1 ? 's' : ''} al mes
+                </span>
+              </button>
+            )
+          })}
+        </div>
 
         {tried && !hasRec && (
           <span role="alert" style={{ fontSize: 12, color: 'var(--error)' }}>

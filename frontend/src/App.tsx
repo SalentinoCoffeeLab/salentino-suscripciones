@@ -269,9 +269,7 @@ function MobileBar({ state, show, onBack }: { state: FlowState; show: boolean; o
 /* ── App ── */
 
 function scrollTop() {
-  setTimeout(() => {
-    try { window.scrollTo({ top: 0, behavior: 'smooth' }) } catch { /* noop */ }
-  }, 30)
+  try { window.scrollTo({ top: 0, behavior: 'instant' }) } catch { /* noop */ }
 }
 
 function App() {
@@ -325,7 +323,7 @@ function App() {
         <div className="cols">
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24, minWidth: 0 }}>
             {/* Always mount all steps, hide inactive with display:none to preserve state */}
-            <div style={{ display: state.step === 1 ? 'contents' : 'none' }}>
+            <div key={`s1-${state.step}`} className={state.step === 1 ? 'step-enter' : undefined} style={{ display: state.step === 1 ? 'contents' : 'none' }}>
               <StepCafe
                 selectedLine={state.line}
                 onSelectLine={handleSelectLine}
@@ -334,7 +332,7 @@ function App() {
             </div>
 
             {state.line && (
-              <div style={{ display: state.step === 2 ? 'contents' : 'none' }}>
+              <div key={`s2-${state.step}`} className={state.step === 2 ? 'step-enter' : undefined} style={{ display: state.step === 2 ? 'contents' : 'none' }}>
                 <StepConfigura
                   key={state.line}
                   line={state.line}
@@ -350,7 +348,7 @@ function App() {
             )}
 
             {state.planId && state.freqDays && state.grind && state.line && (
-              <div style={{ display: state.step === 3 ? 'contents' : 'none' }}>
+              <div key={`s3-${state.step}`} className={state.step === 3 ? 'step-enter' : undefined} style={{ display: state.step === 3 ? 'contents' : 'none' }}>
                 <StepEntrega
                   planId={state.planId}
                   freqDays={state.freqDays}
