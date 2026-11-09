@@ -49,14 +49,18 @@ textarea.inp { min-height: 70px; line-height: 1.5; }
 
 /* Line selection cards (step 1) */
 .line-card {
-  transition: box-shadow .2s ease-out, transform .2s ease-out, border-color .2s;
+  transition: box-shadow .25s ease-out, transform .25s ease-out, border-color .2s;
 }
 .line-card:hover {
-  box-shadow: 0 8px 24px rgba(10,10,10,.12);
-  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(10,10,10,.14), 0 2px 6px rgba(10,10,10,.06);
+  transform: translateY(-4px);
 }
 .line-card[aria-checked="true"] {
-  box-shadow: 0 6px 20px rgba(236,110,37,.25);
+  box-shadow: 0 8px 28px rgba(236,110,37,.3), 0 2px 8px rgba(10,10,10,.08);
+}
+.line-card:active {
+  transform: translateY(-1px);
+  transition-duration: .1s;
 }
 
 /* Fieldsets (step 3) */
