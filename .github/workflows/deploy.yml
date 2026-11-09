@@ -2,7 +2,8 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
-    paths: [frontend/**]
+    paths: [frontend/**, .github/workflows/deploy.yml]
+  workflow_dispatch:
 
 jobs:
   deploy:
