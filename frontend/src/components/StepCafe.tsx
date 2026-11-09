@@ -233,7 +233,7 @@ export function StepCafe({ selectedLine, onSelectLine, onContinue }: StepCafePro
 
               {/* Price + CTA */}
               <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
-                <span style={{ fontSize: 20, fontWeight: 700 }}>{info.from}</span>
+                <span style={{ fontSize: 20, fontWeight: 700, color: isActive ? '#0A0A0A' : '#EC6E25' }}>{info.from}</span>
                 <span style={{
                   display: 'flex', alignItems: 'center', gap: 8,
                   fontSize: 13, fontWeight: 700, letterSpacing: '0.06em',

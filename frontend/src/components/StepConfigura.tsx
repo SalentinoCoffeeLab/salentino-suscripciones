@@ -13,6 +13,16 @@ import {
 } from '../data/plans'
 import { GrindIcon } from './GrindIcon'
 
+function BagIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M7 8h10v12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V8z" />
+      <path d="M6 5h12a1 1 0 0 1 1 1v2H5V6a1 1 0 0 1 1-1z" />
+      <circle cx="12" cy="15" r="3" opacity=".5" />
+    </svg>
+  )
+}
+
 function CupIcon({ count }: { count: number }) {
   const props = { width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
   if (count <= 1) {
@@ -151,7 +161,7 @@ export function StepConfigura({
                 style={pillStyle(isActive)}
               >
                 <span className="ic" aria-hidden="true">
-                  <CupIcon count={c.id === '2' || c.id === '3' ? 2 : 1} />
+                  {c.id === 'bolsa' ? <BagIcon /> : <CupIcon count={c.id === '2' || c.id === '3' ? 2 : 1} />}
                 </span>
                 <span>{c.label}</span>
                 <span style={{ fontSize: 10, fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>
@@ -175,7 +185,7 @@ export function StepConfigura({
               {rec ? 'Te recomendamos ' : 'Elegiste '}
               {selectedPlan!.name}, {selectedFreq!.label.toLowerCase()}.
             </span>
-            <span style={{ fontWeight: 700 }}>{formatPrice(monthly)} al mes</span>
+            <span style={{ fontSize: 18, fontWeight: 700, color: '#EC6E25' }}>{formatPrice(monthly)}/mes</span>
           </div>
         )}
 
@@ -224,8 +234,8 @@ export function StepConfigura({
                     style={pillStyle(isActive)}
                   >
                     <span>{plan.name}</span>
-                    <span style={{ fontSize: 10, fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>
-                      {perShipment} por entrega
+                    <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'none', letterSpacing: 0, color: isActive ? '#EC6E25' : 'inherit' }}>
+                      {perShipment}/entrega
                     </span>
                   </button>
                 )

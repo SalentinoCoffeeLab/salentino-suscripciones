@@ -165,6 +165,7 @@ export interface CupsOption {
 }
 
 export const CUPS_OPTIONS: CupsOption[] = [
+  { id: 'bolsa', label: '1 bolsa al mes', cupsPerMonth: 10 },
   { id: 'menos', label: 'Menos de 1', cupsPerMonth: 15 },
   { id: '1', label: '1 taza', cupsPerMonth: 30 },
   { id: '2', label: '2 tazas', cupsPerMonth: 60 },
