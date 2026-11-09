@@ -390,27 +390,27 @@ export function StepEntrega({
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
           </svg>
-          Conexión segura
+          Datos encriptados
         </span>
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--text)' }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
           </svg>
-          Pago protegido por Mercado Pago
+          Cobro vía Mercado Pago
         </span>
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--text)' }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" />
           </svg>
-          Cancela cuando quieras
+          Pausa o cancela sin penalidad
         </span>
       </div>
 
       <span style={{ fontSize: 12, lineHeight: 1.5, color: 'var(--text)' }}>
-        Te llevamos a Mercado Pago para agregar tu tarjeta. Cobro automático {freqLabel.toLowerCase()}.
+        Se debita {freqLabel.toLowerCase()} con Mercado Pago. No guardamos datos de tu tarjeta.
       </span>
       <span style={{ fontSize: 11, lineHeight: 1.5, color: 'var(--text)' }}>
-        Al continuar, autorizas el tratamiento de tus datos según nuestra política de tratamiento de datos y aceptas recibir avisos de tus entregas por WhatsApp y email.
+        Al continuar aceptas el tratamiento de tus datos personales y recibir avisos de entrega por WhatsApp y email.
       </span>
     </>
   )
