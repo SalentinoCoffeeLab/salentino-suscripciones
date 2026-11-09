@@ -71,14 +71,22 @@ textarea.inp { min-height: 70px; line-height: 1.5; }
 .btn:hover:not([disabled]) { box-shadow: 0 4px 14px rgba(236,110,37,.35); transform: translateY(-1px); }
 .btn[disabled] { opacity: .55; cursor: not-allowed; }
 
-/* Line selection cards */
+/* Line selection cards — 3D tilt */
 .lab-card {
   cursor: pointer; text-align: left;
-  transition: box-shadow .2s ease-out, transform .15s ease-out;
+  transition: box-shadow .3s ease-out, transform .3s ease-out;
+  transform: perspective(800px) rotateY(0deg);
+  transform-style: preserve-3d;
 }
 .lab-card:hover {
-  box-shadow: 0 6px 20px rgba(10,10,10,.15);
-  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(10,10,10,.18), 0 4px 8px rgba(10,10,10,.08);
+  transform: perspective(800px) rotateY(-2deg) rotateX(1deg) translateY(-4px);
+}
+.lab-card[aria-checked="true"] {
+  box-shadow: 0 10px 28px rgba(236,110,37,.3), 0 4px 10px rgba(236,110,37,.15);
+}
+.lab-card[aria-checked="true"]:hover {
+  box-shadow: 0 16px 36px rgba(236,110,37,.35), 0 6px 12px rgba(236,110,37,.2);
 }
 
 /* Title */
@@ -127,5 +135,6 @@ aside :focus-visible { outline-color: #FFFFFF; }
   * { transition: none !important; animation: none !important; }
   .ic { transition: none; }
   .lab-card:hover .ic, .btn:hover .ic, .lnk:hover .ic, .pill2:hover .ic { transform: none; }
-  .pill2:hover, .lab-card:hover, .btn:hover { transform: none; box-shadow: none; }
+  .pill2:hover, .lab-card:hover, .btn:hover { transform: none !important; box-shadow: none !important; }
+  .lab-card[aria-checked="true"] { box-shadow: none !important; }
 }

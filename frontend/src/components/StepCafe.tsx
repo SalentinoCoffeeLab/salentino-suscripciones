@@ -8,6 +8,131 @@ interface StepCafeProps {
 
 const LINES = ['diario', 'especial'] as const
 
+/* ── SVG Coffee Bag Icons ── */
+
+function BagSingle({ color }: { color: string }) {
+  return (
+    <svg width="72" height="72" viewBox="0 0 80 80" fill="none" aria-hidden="true">
+      {/* Bag body */}
+      <path
+        d="M22 28h36v38a6 6 0 0 1-6 6H28a6 6 0 0 1-6-6V28z"
+        fill={color}
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+      {/* Fold top */}
+      <path
+        d="M20 22h40a2 2 0 0 1 2 2v4H18v-4a2 2 0 0 1 2-2z"
+        fill={color}
+        stroke="currentColor"
+        strokeWidth="2"
+        opacity=".85"
+      />
+      {/* Label circle */}
+      <circle cx="40" cy="48" r="12" fill="none" stroke="currentColor" strokeWidth="1.5" opacity=".6" />
+      {/* S logo */}
+      <text
+        x="40" y="53"
+        textAnchor="middle"
+        fontFamily="Georgia,'Times New Roman',serif"
+        fontSize="16"
+        fontWeight="bold"
+        fontStyle="italic"
+        fill="currentColor"
+        opacity=".7"
+      >S</text>
+      {/* Steam lines */}
+      <path d="M34 16c0-4 3-4 3-8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity=".35" />
+      <path d="M40 14c0-4 3-4 3-8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity=".35" />
+      <path d="M46 16c0-4 3-4 3-8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity=".35" />
+    </svg>
+  )
+}
+
+function BagDouble({ color }: { color: string }) {
+  return (
+    <svg width="72" height="72" viewBox="0 0 96 80" fill="none" aria-hidden="true">
+      {/* Back bag */}
+      <g opacity=".55">
+        <path
+          d="M34 30h36v36a6 6 0 0 1-6 6H40a6 6 0 0 1-6-6V30z"
+          fill={color}
+          stroke="currentColor"
+          strokeWidth="2"
+        />
+        <path
+          d="M32 24h40a2 2 0 0 1 2 2v4H30v-4a2 2 0 0 1 2-2z"
+          fill={color}
+          stroke="currentColor"
+          strokeWidth="2"
+        />
+      </g>
+      {/* Front bag */}
+      <path
+        d="M16 32h36v36a6 6 0 0 1-6 6H22a6 6 0 0 1-6-6V32z"
+        fill={color}
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+      <path
+        d="M14 26h40a2 2 0 0 1 2 2v4H12v-4a2 2 0 0 1 2-2z"
+        fill={color}
+        stroke="currentColor"
+        strokeWidth="2"
+        opacity=".85"
+      />
+      {/* Label */}
+      <circle cx="34" cy="50" r="10" fill="none" stroke="currentColor" strokeWidth="1.5" opacity=".6" />
+      <text
+        x="34" y="55"
+        textAnchor="middle"
+        fontFamily="Georgia,'Times New Roman',serif"
+        fontSize="14"
+        fontWeight="bold"
+        fontStyle="italic"
+        fill="currentColor"
+        opacity=".7"
+      >S</text>
+      {/* Star — curated */}
+      <path
+        d="M70 10l2.5 5 5.5.8-4 3.9.9 5.5L70 22.7l-4.9 2.5.9-5.5-4-3.9 5.5-.8z"
+        fill="currentColor"
+        opacity=".3"
+      />
+    </svg>
+  )
+}
+
+/* ── Meta row helper ── */
+function MetaRow({ label, value }: { label: string; value: string }) {
+  return (
+    <span style={{ display: 'flex', gap: 6, fontSize: 13, lineHeight: 1.5 }}>
+      <span style={{ fontWeight: 700, minWidth: 60, flexShrink: 0 }}>{label}</span>
+      <span>{value}</span>
+    </span>
+  )
+}
+
+const META_LABELS: Record<string, string[]> = {
+  diario: ['Café', 'Origen', 'Notas', 'Perfil'],
+  especial: ['Café', 'Origen', 'Notas', 'Perfil'],
+}
+
+const META_VALUES: Record<string, string[]> = {
+  diario: [
+    'Caturra Lavado Tradicional',
+    'Salento, Quindío',
+    'Chocolate amargo, caramelo, panela',
+    'El mismo en cada entrega',
+  ],
+  especial: [
+    'Micro-lotes y varietales',
+    'Rota entre los lotes disponibles',
+    'Cada bolsa llega con su nota de cata',
+    'Cambia en cada entrega',
+  ],
+}
+
 export function StepCafe({ selectedLine, onSelectLine, onContinue }: StepCafeProps) {
   return (
     <>
@@ -25,7 +150,7 @@ export function StepCafe({ selectedLine, onSelectLine, onContinue }: StepCafePro
       <div
         role="radiogroup"
         aria-label="Tipo de café"
-        style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 18 }}
+        style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: 20 }}
       >
         {LINES.map((key) => {
           const info = LINE_INFO[key]
@@ -33,6 +158,10 @@ export function StepCafe({ selectedLine, onSelectLine, onContinue }: StepCafePro
           const plans = getPlansForLine(key)
           const minPerShipment = Math.min(...plans.map(p => p.priceFrom))
           void minPerShipment
+
+          const bagColor = isActive ? '#D45A1A' : '#C9B99A'
+          const labels = META_LABELS[key]
+          const values = META_VALUES[key]
 
           return (
             <button
@@ -43,22 +172,39 @@ export function StepCafe({ selectedLine, onSelectLine, onContinue }: StepCafePro
               onClick={() => onSelectLine(key)}
               aria-checked={isActive}
               style={{
-                display: 'flex', flexDirection: 'column', gap: 12,
-                padding: 22, borderRadius: 18,
-                border: '1px solid #0A0A0A',
+                display: 'flex', flexDirection: 'column', gap: 14,
+                padding: 24, borderRadius: 20,
+                border: isActive ? '2px solid #0A0A0A' : '1.5px solid #0A0A0A',
                 color: '#0A0A0A',
                 background: isActive ? '#EC6E25' : '#F1E7D8',
               }}
             >
-              <span style={{ fontSize: 26, fontWeight: 700, lineHeight: 1.05, textTransform: 'uppercase' }}>
-                {info.name}
+              {/* Header: icon + title */}
+              <span style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                <span style={{
+                  flexShrink: 0,
+                  filter: isActive ? 'drop-shadow(2px 4px 6px rgba(0,0,0,.2))' : 'drop-shadow(1px 2px 4px rgba(0,0,0,.1))',
+                }}>
+                  {key === 'diario' ? <BagSingle color={bagColor} /> : <BagDouble color={bagColor} />}
+                </span>
+                <span style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <span style={{
+                    fontSize: 28, fontWeight: 700, lineHeight: 1.05,
+                    textTransform: 'uppercase',
+                    textShadow: isActive ? '1px 2px 0 rgba(0,0,0,.08)' : 'none',
+                  }}>
+                    {info.name}
+                  </span>
+                  <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', opacity: 0.75 }}>
+                    {info.kicker}
+                  </span>
+                </span>
               </span>
-              <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.06em' }}>
-                {info.kicker}
-              </span>
-              <span style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 14, lineHeight: 1.5 }}>
-                {info.meta.map((m) => (
-                  <span key={m}>{m}</span>
+
+              {/* Meta details — structured rows */}
+              <span style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                {labels.map((label, i) => (
+                  <MetaRow key={label} label={label} value={values[i]} />
                 ))}
               </span>
 
@@ -68,7 +214,7 @@ export function StepCafe({ selectedLine, onSelectLine, onContinue }: StepCafePro
                 style={{
                   position: 'relative', display: 'block',
                   borderTop: '2px dashed currentColor',
-                  margin: '4px -22px', opacity: 0.9,
+                  margin: '2px -24px', opacity: 0.9,
                 }}
               >
                 <span style={{
@@ -85,6 +231,7 @@ export function StepCafe({ selectedLine, onSelectLine, onContinue }: StepCafePro
                 }} />
               </span>
 
+              {/* Price + CTA */}
               <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
                 <span style={{ fontSize: 20, fontWeight: 700 }}>{info.from}</span>
                 <span style={{
