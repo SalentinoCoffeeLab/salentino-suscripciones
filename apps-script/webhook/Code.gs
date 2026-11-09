@@ -7,11 +7,9 @@
  * Deploy as: Web app → Execute as: Me → Access: Anyone
  *
  * Script Properties required:
- *   MP_ACCESS_TOKEN      — Mercado Pago access token
- *   SPREADSHEET_ID       — Google Sheet ID
- *   TEAM_EMAIL           — Team notification email
- *   SHOPIFY_DOMAIN       — e.g. b0f1cf-3a.myshopify.com
- *   SHOPIFY_ACCESS_TOKEN — Shopify Admin API access token
+ *   MP_ACCESS_TOKEN — Mercado Pago access token
+ *   TEAM_EMAIL      — Team notification email
+ *   DISCOUNT_CODE   — Generic discount code (e.g. SUSCRIPTOR10)
  */
 
 /**

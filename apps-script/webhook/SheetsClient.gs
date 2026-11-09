@@ -17,16 +17,16 @@
  */
 
 var _PROPS = PropertiesService.getScriptProperties();
-var _SHEET_ID = _PROPS.getProperty("SPREADSHEET_ID");
 var TEAM_EMAIL = _PROPS.getProperty("TEAM_EMAIL") || "team@salentino.co";
 
 /**
  * Get a sheet by name.
+ * Uses getActiveSpreadsheet() for bound scripts.
  * @param {string} name
  * @returns {Sheet}
  */
 function _getSheet(name) {
-  return SpreadsheetApp.openById(_SHEET_ID).getSheetByName(name);
+  return SpreadsheetApp.getActiveSpreadsheet().getSheetByName(name);
 }
 
 /**
