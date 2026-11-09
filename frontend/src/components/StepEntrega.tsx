@@ -168,7 +168,7 @@ export function StepEntrega({
   const ctaText = loading
     ? 'Guardando tus datos…'
     : allValid
-      ? `Agregar tarjeta y pagar ${formatPrice(monthly)}/mes`
+      ? `Activar mi primer envío · ${formatPrice(monthly)}/mes`
       : 'Completa tus datos'
 
   return (
