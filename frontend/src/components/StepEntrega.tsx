@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { formatPrice, getMonthlyPrice, getCheckoutUrl, getMpPlanKey, getPlanById, LINE_INFO, GRIND_OPTIONS } from '../data/plans'
+import { formatPrice, getMonthlyPrice, getPerShipmentPrice, getCheckoutUrl, getMpPlanKey, getPlanById, LINE_INFO, GRIND_OPTIONS, CITIES } from '../data/plans'
 import { submitSubscription } from '../lib/submit'
 
 interface StepEntregaProps {
@@ -64,9 +64,11 @@ export function StepEntrega({
   const [billingEmail, setBillingEmail] = useState('')
   const [touched, setTouched] = useState<Record<string, boolean>>({})
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const plan = getPlanById(planId)
   const monthly = getMonthlyPrice(planId, freqDays) ?? 0
+  const perShipment = getPerShipmentPrice(planId, freqDays) ?? 0
   const grindLabel = GRIND_OPTIONS.find(g => g.id === grindId)?.label ?? grindId
 
   const valid = {
@@ -112,6 +114,7 @@ export function StepEntrega({
     if (!mpPlanKey) return
 
     setLoading(true)
+    setError('')
 
     try {
       const lineInfo = LINE_INFO[line]
@@ -129,7 +132,7 @@ export function StepEntrega({
           coffee: lineInfo.coffee,
           grind: grindLabel,
           frequency: freqDays,
-          price: monthly,
+          price: perShipment,
           mpPlanId: planId,
         },
         appsScriptUrl
@@ -138,8 +141,11 @@ export function StepEntrega({
       window.location.href = result.checkoutUrl
     } catch {
       setLoading(false)
+      setError('No pudimos registrar tu suscripción. Intenta de nuevo.')
       const checkoutUrl = getCheckoutUrl(planId, freqDays)
-      if (checkoutUrl) window.location.href = checkoutUrl
+      if (checkoutUrl) {
+        setTimeout(() => { window.location.href = checkoutUrl }, 2000)
+      }
     }
   }
 
@@ -255,14 +261,18 @@ export function StepEntrega({
         <div>
           <label className="lbl" htmlFor="x-city">CIUDAD O MUNICIPIO <span style={{ color: 'var(--accent)' }}>*</span></label>
           <div style={{ position: 'relative' }}>
-            <input
-              id="x-city" className="inp" type="text" autoComplete="address-level2"
-              placeholder="Ej. Medellín" value={city}
-              onChange={e => { setCity(e.target.value); startTyping() }}
+            <select
+              id="x-city" className="inp"
+              value={city}
+              onChange={e => { setCity(e.target.value) }}
               onBlur={() => blur('city')}
               aria-invalid={touched.city && !valid.city}
               aria-describedby="e-city"
-            />
+              style={{ appearance: 'none', paddingRight: 44 }}
+            >
+              <option value="">Selecciona tu ciudad</option>
+              {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
             {valid.city && <CheckIcon />}
           </div>
           <span id="e-city" style={{ display: 'block', minHeight: 14, marginTop: 3, paddingLeft: 16, fontSize: 11, color: 'var(--error)' }}>
@@ -339,6 +349,12 @@ export function StepEntrega({
         )}
       </fieldset>
 
+      {error && (
+        <span role="alert" className="pop" style={{ fontSize: 13, color: 'var(--error)', fontWeight: 700 }}>
+          {error}
+        </span>
+      )}
+
       {/* Navigation */}
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 14 }}>
         <button
@@ -357,7 +373,7 @@ export function StepEntrega({
           type="button"
           className="btn"
           onClick={handlePay}
-          disabled={loading || !allValid}
+          disabled={loading}
           aria-busy={loading}
           style={{ gap: 10, padding: '0 30px' }}
         >

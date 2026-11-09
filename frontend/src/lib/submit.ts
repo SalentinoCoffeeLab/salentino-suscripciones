@@ -33,7 +33,7 @@ export async function submitSubscription(
   try {
     const response = await fetch(appsScriptUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
       signal: controller.signal,
     })

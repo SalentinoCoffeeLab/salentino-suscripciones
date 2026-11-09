@@ -2,15 +2,16 @@
  * Webhook Handler — Google Apps Script Web App
  *
  * Receives Mercado Pago payment webhooks, matches subscriber by email,
- * creates dispatch record in Airtable, and notifies the team.
+ * creates dispatch record in Google Sheets, and notifies the team.
  *
  * Deploy as: Web app → Execute as: Me → Access: Anyone
  *
  * Script Properties required:
- *   MP_ACCESS_TOKEN  — Mercado Pago access token
- *   AIRTABLE_PAT     — Airtable Personal Access Token
- *   AIRTABLE_BASE_ID — Airtable Base ID
- *   TEAM_EMAIL       — Team notification email
+ *   MP_ACCESS_TOKEN      — Mercado Pago access token
+ *   SPREADSHEET_ID       — Google Sheet ID
+ *   TEAM_EMAIL           — Team notification email
+ *   SHOPIFY_DOMAIN       — e.g. b0f1cf-3a.myshopify.com
+ *   SHOPIFY_ACCESS_TOKEN — Shopify Admin API access token
  */
 
 /**
@@ -60,6 +61,17 @@ function doPost(e) {
       createDespacho(subscriber, payment);
       updateSubscriberStatus(subscriber.id, "Activo");
       notifyTeam(subscriber, payment);
+
+      // First payment: create Shopify discount code + send welcome email
+      if (!subscriber.fields["Código descuento"]) {
+        try {
+          var discountCode = createDiscountCode(payerEmail);
+          saveDiscountCode(subscriber.id, discountCode);
+          sendWelcomeEmail(subscriber, discountCode);
+        } catch (discountErr) {
+          console.error("Discount/welcome email error: " + discountErr.message);
+        }
+      }
     } else {
       logException(payment);
       notifyException(payment);

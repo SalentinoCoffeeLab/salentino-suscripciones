@@ -27,7 +27,7 @@ describe('SALENTINO_PLANS', () => {
       if (plan.line === 'diario') {
         expect(plan.frequencies).toEqual([15, 30])
       } else if (plan.id === 'especial-250') {
-        expect(plan.frequencies).toEqual([15])
+        expect(plan.frequencies).toEqual([15, 30])
       } else {
         expect(plan.frequencies).toEqual([30])
       }
@@ -74,12 +74,16 @@ describe('getCheckoutUrl', () => {
   })
 
   test('returns undefined for invalid frequency', () => {
-    expect(getCheckoutUrl('especial-250', 30)).toBeUndefined()
     expect(getCheckoutUrl('especial-500', 15)).toBeUndefined()
   })
 
   test('returns URL for especial-250 quincenal', () => {
     const url = getCheckoutUrl('especial-250', 15)
+    expect(url).toContain('mpago.la')
+  })
+
+  test('returns URL for especial-250 mensual', () => {
+    const url = getCheckoutUrl('especial-250', 30)
     expect(url).toContain('mpago.la')
   })
 
@@ -98,8 +102,12 @@ describe('getMonthlyPrice', () => {
     expect(getMonthlyPrice('diario-454', 30)).toBe(72000)
   })
 
+  test('especial-250 mensual costs 80000/month', () => {
+    expect(getMonthlyPrice('especial-250', 30)).toBe(80000)
+  })
+
   test('returns undefined for invalid combo', () => {
-    expect(getMonthlyPrice('especial-250', 30)).toBeUndefined()
+    expect(getMonthlyPrice('especial-500', 15)).toBeUndefined()
   })
 })
 

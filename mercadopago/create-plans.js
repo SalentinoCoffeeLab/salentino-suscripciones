@@ -22,25 +22,14 @@ const path = require("path");
 const API_URL = "https://api.mercadopago.com/preapproval_plan";
 
 const PLANS = [
-  // SUMINISTRO: 3 gramajes × 3 frecuencias = 9 planes
-  { key: "suministro_454_7", reason: "Salentino Suministro 454g Semanal", price: 60000, frequency: 7 },
-  { key: "suministro_454_14", reason: "Salentino Suministro 454g Quincenal", price: 60000, frequency: 14 },
-  { key: "suministro_454_30", reason: "Salentino Suministro 454g Mensual", price: 60000, frequency: 30 },
-  { key: "suministro_1000_7", reason: "Salentino Suministro 1kg Semanal", price: 105000, frequency: 7 },
-  { key: "suministro_1000_14", reason: "Salentino Suministro 1kg Quincenal", price: 105000, frequency: 14 },
-  { key: "suministro_1000_30", reason: "Salentino Suministro 1kg Mensual", price: 105000, frequency: 30 },
-  { key: "suministro_2000_7", reason: "Salentino Suministro 2kg Semanal", price: 195000, frequency: 7 },
-  { key: "suministro_2000_14", reason: "Salentino Suministro 2kg Quincenal", price: 195000, frequency: 14 },
-  { key: "suministro_2000_30", reason: "Salentino Suministro 2kg Mensual", price: 195000, frequency: 30 },
-  // LAB SERIES: 3 opciones × 2 frecuencias = 6 planes
-  { key: "lab_discovery_14", reason: "Salentino Lab Series Discovery Quincenal", price: 68000, frequency: 14 },
-  { key: "lab_discovery_30", reason: "Salentino Lab Series Discovery Mensual", price: 68000, frequency: 30 },
-  { key: "lab_ritual_14", reason: "Salentino Lab Series Ritual Quincenal", price: 110000, frequency: 14 },
-  { key: "lab_ritual_30", reason: "Salentino Lab Series Ritual Mensual", price: 110000, frequency: 30 },
-  { key: "lab_contraste_14", reason: "Salentino Lab Series Contraste Quincenal", price: 125000, frequency: 14 },
-  { key: "lab_contraste_30", reason: "Salentino Lab Series Contraste Mensual", price: 125000, frequency: 30 },
-  // MIGRACIÓN
-  { key: "migration_podio_ritual", reason: "Salentino Migración Podio → Ritual Mensual", price: 90000, frequency: 30 },
+  // CAFÉ DE DIARIO: 2 gramajes × 2 frecuencias = 4 planes
+  { key: "diario_454_15", reason: "Salentino Café de Diario 454g Quincenal", price: 140000, frequency: 30 },
+  { key: "diario_454_30", reason: "Salentino Café de Diario 454g Mensual", price: 72000, frequency: 30 },
+  { key: "diario_1kg_15", reason: "Salentino Café de Diario 1kg Quincenal", price: 230000, frequency: 30 },
+  { key: "diario_1kg_30", reason: "Salentino Café de Diario 1kg Mensual", price: 115000, frequency: 30 },
+  // EDICIONES ESPECIALES: 1 frecuencia por plan = 2 planes
+  { key: "especial_250_15", reason: "Salentino Ediciones Especiales 250g Quincenal", price: 180000, frequency: 30 },
+  { key: "especial_500_30", reason: "Salentino Ediciones Especiales 500g Mensual", price: 160000, frequency: 30 },
 ];
 
 async function createPlan(plan) {
@@ -88,7 +77,6 @@ async function main() {
     created++;
     console.log(` OK (${result.planId})`);
 
-    // Small delay to avoid rate limiting
     if (created < PLANS.length) {
       await new Promise((resolve) => setTimeout(resolve, 500));
     }

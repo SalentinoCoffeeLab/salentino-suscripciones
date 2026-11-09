@@ -49,7 +49,15 @@ describe('submitSubscription', () => {
   })
 
   test('throws on invalid plan/frequency combo', async () => {
-    const bad = { ...validPayload, mpPlanId: 'especial-250', frequency: 30 }
+    const bad = { ...validPayload, mpPlanId: 'especial-500', frequency: 15 }
     await expect(submitSubscription(bad, 'https://script.google.com/test')).rejects.toThrow('Invalid plan/frequency')
+  })
+
+  test('especial-250 mensual returns checkout URL', async () => {
+    global.fetch = vi.fn().mockResolvedValue({ ok: true })
+    const payload = { ...validPayload, mpPlanId: 'especial-250', frequency: 30, price: 80000 }
+    const result = await submitSubscription(payload, 'https://script.google.com/test')
+    expect(result.checkoutUrl).toContain('mpago.la')
+    expect(result.success).toBe(true)
   })
 })

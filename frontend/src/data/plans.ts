@@ -80,7 +80,7 @@ const MP_LOOKUP: Record<string, { checkoutUrl: string; monthlyPrice: number }> =
   diario_1kg_15: { checkoutUrl: 'https://mpago.la/2qFkE4a', monthlyPrice: 230000 },
   diario_1kg_30: { checkoutUrl: 'https://mpago.la/1gzdvvs', monthlyPrice: 115000 },
   especial_250_15: { checkoutUrl: 'https://mpago.la/1fUumqj', monthlyPrice: 180000 },
-  especial_250_30: { checkoutUrl: 'PENDING_MP_LINK', monthlyPrice: 80000 },
+  especial_250_30: { checkoutUrl: 'https://mpago.la/31Qm3xA', monthlyPrice: 80000 },
   especial_500_30: { checkoutUrl: 'https://mpago.la/1LmZd4D', monthlyPrice: 160000 },
 }
 

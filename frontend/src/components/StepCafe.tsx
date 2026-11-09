@@ -1,4 +1,4 @@
-import { LINE_INFO, getPlansForLine } from '../data/plans'
+import { LINE_INFO } from '../data/plans'
 
 interface StepCafeProps {
   selectedLine: 'diario' | 'especial' | null
@@ -155,10 +155,6 @@ export function StepCafe({ selectedLine, onSelectLine, onContinue }: StepCafePro
         {LINES.map((key) => {
           const info = LINE_INFO[key]
           const isActive = selectedLine === key
-          const plans = getPlansForLine(key)
-          const minPerShipment = Math.min(...plans.map(p => p.priceFrom))
-          void minPerShipment
-
           const bagColor = isActive ? '#D45A1A' : '#C9B99A'
           const labels = META_LABELS[key]
           const values = META_VALUES[key]

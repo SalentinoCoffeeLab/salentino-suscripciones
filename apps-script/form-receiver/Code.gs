@@ -39,6 +39,9 @@ function doPost(e) {
       "Precio/envío": payload.price || 0,
       "Estado": "Pendiente de pago",
       "MP Plan ID": payload.mpPlanId || "",
+      "NIT": payload.billingNit || "",
+      "Razón social": payload.billingName || "",
+      "Email factura": payload.billingEmail || "",
     };
 
     var isNew = findSubscriberByEmail(payload.email) === null;
