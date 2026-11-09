@@ -131,100 +131,120 @@ function Sidebar({ state }: { state: FlowState }) {
 
   return (
     <aside
-      className="only-d"
+      className="only-d line-card"
       aria-label="Tu plan"
       aria-live="polite"
       style={{
         position: 'sticky', top: 32,
         display: 'flex', flexDirection: 'column',
-        background: 'var(--card)', color: 'var(--ink)',
-        borderRadius: 16, overflow: 'hidden',
+        padding: 0, borderRadius: 16, overflow: 'hidden',
         border: '1px solid var(--line)',
-        boxShadow: 'var(--shadow-md)',
+        background: 'var(--card)', color: 'var(--ink)',
       }}
     >
-      {/* Header */}
-      <div style={{
-        padding: '20px 22px 16px',
-        borderBottom: '1px solid var(--line)',
+      {/* ── Header band (same as line-card-header) ── */}
+      <div className="line-card-header" style={{
+        display: 'flex', flexDirection: 'column', gap: 6,
+        padding: '22px 24px 18px',
+        background: 'var(--ink)', color: 'var(--bg)',
       }}>
         <span style={{
-          display: 'block', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em',
-          textTransform: 'uppercase', color: 'var(--text)', marginBottom: 8,
+          fontSize: 9, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase',
+          color: lineInfo ? 'var(--accent)' : 'rgba(249,244,237,.5)',
         }}>
           Tu suscripción
         </span>
-        <span className="pop" style={{ fontSize: 16, fontWeight: 700, letterSpacing: '-0.01em', lineHeight: 1.2 }}>
+        <span className="pop" style={{ fontSize: 22, fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.02em' }}>
           {lineInfo ? lineInfo.name : 'Elige tu café'}
         </span>
         {lineInfo && (
-          <span style={{ display: 'block', fontSize: 12, marginTop: 4, color: 'var(--text)', lineHeight: 1.4 }}>
+          <span style={{ fontSize: 12, marginTop: 2, color: 'rgba(249,244,237,.6)', lineHeight: 1.4 }}>
             {state.line === 'diario' ? 'Caturra Lavado Tradicional' : 'Selección del tostador'}
           </span>
         )}
       </div>
 
-      {/* Config details */}
-      <div style={{ padding: '16px 22px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '8px 14px', margin: 0, fontSize: 12 }}>
-          {plan && <><dt style={{ color: 'var(--text)' }}>Cantidad</dt><dd style={{ margin: 0, textAlign: 'right', fontWeight: 700 }}>{plan.name}</dd></>}
-          {grindObj && <><dt style={{ color: 'var(--text)' }}>Molienda</dt><dd style={{ margin: 0, textAlign: 'right', fontWeight: 700 }}>{grindObj.label}</dd></>}
-          {freqLabel && <><dt style={{ color: 'var(--text)' }}>Frecuencia</dt><dd style={{ margin: 0, textAlign: 'right', fontWeight: 700 }}>{freqLabel}</dd></>}
-        </dl>
-      </div>
-
-      {/* Divider */}
-      <span aria-hidden="true" style={{
-        display: 'block', height: 1,
-        background: 'var(--line)', margin: '0 22px',
-      }} />
-
-      {/* Price breakdown */}
-      <div style={{ padding: '16px 22px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '8px 14px', margin: 0, fontSize: 12 }}>
-          <dt style={{ color: 'var(--text)' }}>Por entrega</dt>
-          <dd style={{ margin: 0, textAlign: 'right', fontWeight: 700 }}>{perShipment ? formatPrice(perShipment) : '—'}</dd>
-          <dt style={{ color: 'var(--text)' }}>Domicilio</dt>
-          <dd style={{ margin: 0, textAlign: 'right', fontWeight: 700, color: 'var(--ok)' }}>Incluido</dd>
-          {retailPrice > 0 && (
-            <><dt style={{ color: 'var(--text)' }}>Precio suelto</dt>
-            <dd style={{ margin: 0, textAlign: 'right', fontWeight: 400, textDecoration: 'line-through', color: 'var(--text)' }}>{formatPrice(retailPrice)}</dd></>
+      {/* ── Body (same as line-card-body) ── */}
+      <div className="line-card-body" style={{
+        display: 'flex', flexDirection: 'column', gap: 14,
+        padding: '18px 24px 22px',
+      }}>
+        {/* Config rows */}
+        <dl style={{
+          display: 'grid', gridTemplateColumns: '68px 1fr',
+          gap: '5px 10px', margin: 0,
+        }}>
+          {plan && (
+            <span style={{ display: 'contents' }}>
+              <dt style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text)', paddingTop: 2 }}>Cantidad</dt>
+              <dd style={{ margin: 0, fontSize: 12, lineHeight: 1.5, color: 'var(--ink)' }}>{plan.name} · ~{plan.cupsPerShipment} tazas</dd>
+            </span>
           )}
+          {grindObj && (
+            <span style={{ display: 'contents' }}>
+              <dt style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text)', paddingTop: 2 }}>Molienda</dt>
+              <dd style={{ margin: 0, fontSize: 12, lineHeight: 1.5, color: 'var(--ink)' }}>{grindObj.label}</dd>
+            </span>
+          )}
+          {freqLabel && (
+            <span style={{ display: 'contents' }}>
+              <dt style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text)', paddingTop: 2 }}>Frecuencia</dt>
+              <dd style={{ margin: 0, fontSize: 12, lineHeight: 1.5, color: 'var(--ink)' }}>{freqLabel}</dd>
+            </span>
+          )}
+          <span style={{ display: 'contents' }}>
+            <dt style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text)', paddingTop: 2 }}>Domicilio</dt>
+            <dd style={{ margin: 0, fontSize: 12, lineHeight: 1.5, color: 'var(--ok)', fontWeight: 700 }}>Incluido</dd>
+          </span>
         </dl>
 
-        {/* Savings pill */}
-        {retailPrice > 0 && perShipment > 0 && (
-          <span style={{
-            display: 'inline-flex', alignSelf: 'flex-start',
-            padding: '4px 10px', borderRadius: 6,
-            background: 'rgba(31,122,63,.08)', color: 'var(--ok)',
-            fontSize: 11, fontWeight: 700, letterSpacing: '.04em',
-          }}>
-            Ahorras {formatPrice(retailPrice - perShipment)}/entrega
+        {/* ── Price + savings (same as card footer) ── */}
+        <span style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 12,
+          marginTop: 'auto', paddingTop: 16,
+          borderTop: '1px solid var(--line)',
+        }}>
+          <span style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <span style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
+              <span style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1 }}>
+                {monthly ? formatPrice(monthly) : '—'}
+              </span>
+              <span style={{ fontSize: 12, color: 'var(--text)', fontWeight: 400 }}>/mes</span>
+            </span>
+            {retailPrice > 0 && perShipment > 0 ? (
+              <span style={{ fontSize: 11, lineHeight: 1.4, color: 'var(--text)' }}>
+                Ahorras <span style={{ fontWeight: 700, color: 'var(--ok)' }}>{formatPrice(retailPrice - perShipment)}</span>/entrega
+              </span>
+            ) : (
+              <span style={{ fontSize: 11, lineHeight: 1.4, color: 'var(--text)' }}>
+                {perShipment ? `${formatPrice(perShipment)} por entrega` : 'Configura tu plan'}
+              </span>
+            )}
+          </span>
+
+          {retailPrice > 0 && perShipment > 0 && (
+            <span style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1,
+            }}>
+              <span style={{ fontSize: 10, color: 'var(--text)', textDecoration: 'line-through' }}>
+                {formatPrice(retailPrice)}
+              </span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--ok)' }}>
+                {formatPrice(perShipment)}
+              </span>
+            </span>
+          )}
+        </span>
+
+        {/* Fine print */}
+        {monthly > 0 && (
+          <span style={{ fontSize: 11, lineHeight: 1.5, color: 'var(--text)' }}>
+            {state.freqDays === 15
+              ? 'Débito mensual vía Mercado Pago. Cubre 2 entregas.'
+              : 'Débito mensual vía Mercado Pago.'}
           </span>
         )}
       </div>
-
-      {/* Total */}
-      <div style={{
-        padding: '16px 22px 20px',
-        background: 'var(--ink)', color: 'var(--bg)',
-        display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
-      }}>
-        <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase' }}>Total/mes</span>
-        <span className="pop" style={{ fontSize: 28, fontWeight: 700, letterSpacing: '-0.03em' }}>
-          {monthly ? formatPrice(monthly) : '—'}
-        </span>
-      </div>
-
-      {/* Fine print */}
-      {monthly > 0 && (
-        <span style={{ padding: '12px 22px 14px', fontSize: 11, lineHeight: 1.5, color: 'var(--text)', borderTop: '1px solid var(--line)' }}>
-          {state.freqDays === 15
-            ? 'Débito mensual vía Mercado Pago. Cubre 2 entregas.'
-            : 'Débito mensual vía Mercado Pago.'}
-        </span>
-      )}
     </aside>
   )
 }
