@@ -75,10 +75,10 @@ export function StepConfigura({
   return (
     <>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700 }}>
+        <h1 className="h1-step" style={{ margin: 0, fontSize: 28, fontWeight: 700 }}>
           Configura tu <span style={{ color: 'var(--accent)' }}>plan</span>
         </h1>
-        <p style={{ margin: 0, maxWidth: 520, fontSize: 16, lineHeight: 1.5, color: 'var(--text)' }}>
+        <p className="p-step" style={{ margin: 0, maxWidth: 520, fontSize: 16, lineHeight: 1.5, color: 'var(--text)' }}>
           {line === 'especial'
             ? 'El tostador elige el café. Tú decides cuánto, cada cuánto y cómo lo molemos.'
             : 'Siempre nuestro Caturra Lavado Tradicional. Tú decides cuánto, cada cuánto y cómo lo molemos.'}

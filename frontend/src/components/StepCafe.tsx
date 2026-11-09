@@ -25,10 +25,10 @@ export function StepCafe({ selectedLine, onSelectLine }: StepCafeProps) {
   return (
     <>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700 }}>
+        <h1 className="h1-step" style={{ margin: 0, fontSize: 28, fontWeight: 700 }}>
           Elige tu <span style={{ color: 'var(--accent)' }}>café</span>
         </h1>
-        <p style={{ margin: 0, maxWidth: 520, fontSize: 14, lineHeight: 1.5, color: 'var(--text)' }}>
+        <p className="p-step" style={{ margin: 0, maxWidth: 520, fontSize: 14, lineHeight: 1.5, color: 'var(--text)' }}>
           Dos líneas. Las dos llegan recién tostadas y con domicilio incluido.
         </p>
       </div>
@@ -66,7 +66,7 @@ export function StepCafe({ selectedLine, onSelectLine }: StepCafeProps) {
               }}
             >
               {/* ── Header band ── */}
-              <span style={{
+              <span className="line-card-header" style={{
                 display: 'flex', flexDirection: 'column', gap: 6,
                 padding: '24px 28px 20px',
                 background: isActive
@@ -88,7 +88,7 @@ export function StepCafe({ selectedLine, onSelectLine }: StepCafeProps) {
               </span>
 
               {/* ── Body ── */}
-              <span style={{
+              <span className="line-card-body" style={{
                 display: 'flex', flexDirection: 'column', gap: 16,
                 padding: '20px 28px 24px',
                 flex: 1,

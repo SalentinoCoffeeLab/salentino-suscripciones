@@ -179,10 +179,10 @@ export function StepEntrega({
   return (
     <>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700 }}>
+        <h1 className="h1-step" style={{ margin: 0, fontSize: 28, fontWeight: 700 }}>
           Datos de <span style={{ color: 'var(--accent)' }}>entrega</span>
         </h1>
-        <p style={{ margin: 0, maxWidth: 520, fontSize: 16, lineHeight: 1.5, color: 'var(--text)' }}>
+        <p className="p-step" style={{ margin: 0, maxWidth: 520, fontSize: 16, lineHeight: 1.5, color: 'var(--text)' }}>
           Dónde llega tu café. Usamos tu celular solo para avisarte cuando sale cada entrega.
         </p>
       </div>
@@ -305,7 +305,7 @@ export function StepEntrega({
           <label className="lbl" htmlFor="x-notes">OBSERVACIONES</label>
           <textarea
             id="x-notes" className="inp" rows={3}
-            placeholder="Ej. Portería cerrada después de las 6pm, timbre no funciona, dejar con el vigilante..."
+            placeholder="Portería cerrada, timbre no funciona, dejar con el vigilante..."
             value={notes}
             onChange={e => { setNotes(e.target.value); startTyping() }}
             onBlur={() => onTypingChange(false)}
@@ -365,7 +365,7 @@ export function StepEntrega({
               <label className="lbl" htmlFor="x-bemail">EMAIL PARA FACTURA</label>
               <input
                 id="x-bemail" className="inp" type="email"
-                placeholder="contabilidad@empresa.com (si es diferente al de contacto)"
+                placeholder="contabilidad@empresa.com"
                 value={billingEmail}
                 onChange={e => { setBillingEmail(e.target.value); startTyping() }}
                 onBlur={() => onTypingChange(false)}

@@ -320,12 +320,12 @@ function App() {
 
   return (
     <div style={{ minHeight: '100%', background: 'var(--bg)', color: 'var(--ink)', fontFamily: 'var(--font)' }}>
-      <div style={{
+      <div className="app-container" style={{
         maxWidth: 1240, margin: '0 auto', padding: '24px 24px 140px',
         boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 26,
       }}>
         {/* Stepper — sticky nav */}
-        <div style={{
+        <div className="stepper-nav" style={{
           position: 'sticky', top: 0, zIndex: 10,
           background: 'rgba(249,244,237,.86)', backdropFilter: 'blur(14px)',
           WebkitBackdropFilter: 'blur(14px)',

@@ -156,15 +156,46 @@ aside :focus-visible { outline-color: var(--accent); }
 
 /* Mobile overrides */
 .only-m { display: none; }
+
+@media (max-width: 900px) {
+  .cols { grid-template-columns: 1fr; }
+}
+
 @media (max-width: 639px) {
   .only-d { display: none !important; }
   .only-m { display: flex; }
-  .inp { font-size: 16px; }
-  .cols { grid-template-columns: 1fr; }
-  .fs { padding: 16px; }
-}
-@media (max-width: 900px) {
-  .cols { grid-template-columns: 1fr; }
+
+  /* Inputs: 16px prevents iOS zoom, taller touch targets, roomier padding */
+  .inp { font-size: 16px; padding: 14px 44px 14px 16px; min-height: 50px; }
+  textarea.inp { min-height: 80px; }
+
+  /* Placeholders: shorter on small screens */
+  .inp::placeholder { font-size: 14px; }
+
+  /* Fieldsets: tighter horizontal padding */
+  .fs { padding: 18px 16px 16px; gap: 12px; }
+
+  /* Cards: less horizontal padding */
+  .line-card-header { padding: 20px 20px 16px !important; }
+  .line-card-body { padding: 16px 20px 20px !important; }
+
+  /* Option buttons: taller for fat fingers */
+  .opt { min-height: 56px; padding: 12px 14px; }
+
+  /* CTA button: full width, taller */
+  .btn { min-height: 56px; font-size: 14px; width: 100%; }
+
+  /* FAQ: tighter */
+  .faq-summary { font-size: 14px; }
+  .faq-answer { font-size: 13px; }
+
+  /* Container: tighter lateral padding */
+  .app-container { padding: 16px 16px 140px !important; gap: 22px !important; }
+  .stepper-nav { margin: 0 -16px !important; padding: 10px 16px !important; }
+
+  /* Typography scale down */
+  .h1-step { font-size: 24px !important; }
+  .p-step { font-size: 14px !important; }
 }
 
 /* Reduced motion */
