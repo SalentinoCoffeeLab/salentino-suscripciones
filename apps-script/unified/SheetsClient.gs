@@ -103,12 +103,20 @@ function findDespachoByPaymentId(paymentId) {
   return null;
 }
 
-function createDespacho(subscriber, payment) {
+/**
+ * @param delivery {date, note} — fecha desde la que se despacha y nota visible
+ *   para el equipo ("Entrega 2 de 2 · NO despachar antes del …"). Opcional.
+ */
+function createDespacho(subscriber, payment, delivery) {
   var sheet = _getSheet("Despachos");
   if (!sheet) throw new Error("Sheet 'Despachos' not found");
 
   var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  var paidOn = _dateBogota(new Date(payment.date_approved || payment.date_created));
+  var note = (delivery && delivery.note) || "";
 
+  // Solo se escriben las columnas que existan en la hoja. "Fecha de pago" y
+  // "Fecha de pago MP" van las dos porque la guía de montaje usa la segunda.
   var fields = {
     "Suscriptor Email": subscriber.fields["Email"],
     "Nombre": subscriber.fields["Nombre"],
@@ -116,10 +124,14 @@ function createDespacho(subscriber, payment) {
     "Molienda": subscriber.fields["Molienda"],
     "Dirección": (subscriber.fields["Dirección"] || "") + ", " + (subscriber.fields["Ciudad"] || ""),
     "Teléfono": subscriber.fields["Teléfono"],
-    "Fecha de pago": new Date(payment.date_approved || payment.date_created).toISOString().split("T")[0],
-    "Monto pagado": payment.transaction_amount,
+    "Fecha de pago": paidOn,
+    "Fecha de pago MP": paidOn,
+    // La 2.ª entrega del quincenal va sin monto: el cobro ya está en la 1.ª fila
+    // y así la suma de la columna sigue cuadrando con lo cobrado.
+    "Monto pagado": (delivery && delivery.withoutAmount) ? "" : payment.transaction_amount,
     "MP Payment ID": String(payment.id),
     "Estado despacho": "Por despachar",
+    "Notas": note,
   };
 
   var row = headers.map(function(h) { return fields[h] !== undefined ? fields[h] : ""; });

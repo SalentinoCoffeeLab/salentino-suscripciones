@@ -65,6 +65,7 @@ export function StepEntrega({
   const [touched, setTouched] = useState<Record<string, boolean>>({})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [saveFailed, setSaveFailed] = useState(false)
 
   const plan = getPlanById(planId)
   const monthly = getMonthlyPrice(planId, freqDays) ?? 0
@@ -138,21 +139,36 @@ export function StepEntrega({
         appsScriptUrl
       )
 
-      window.location.href = result.checkoutUrl
+      // Solo pasamos a Mercado Pago cuando el Sheet confirmó que guardó los datos.
+      if (result.success) {
+        window.location.href = result.checkoutUrl
+        return
+      }
+
+      setLoading(false)
+      setSaveFailed(true)
+      setError(
+        result.reason === 'rejected' && result.message
+          ? `No pudimos guardar tus datos: ${result.message}. Revísalos e intenta de nuevo.`
+          : 'No pudimos guardar tus datos de entrega. Revisa tu conexión e intenta de nuevo.'
+      )
     } catch {
       setLoading(false)
-      setError('No pudimos registrar tu suscripción. Intenta de nuevo.')
-      const checkoutUrl = getCheckoutUrl(planId, freqDays)
-      if (checkoutUrl) {
-        setTimeout(() => { window.location.href = checkoutUrl }, 2000)
-      }
+      setError('Hubo un problema con el plan elegido. Vuelve al paso anterior y elígelo otra vez.')
     }
   }
 
+  // Salida de emergencia si el guardado falla: el pago entra igual y el equipo
+  // lo ve como "PAGO SIN PRE-REGISTRO" para pedir los datos por WhatsApp o email.
+  const payWithoutSaving = () => {
+    const checkoutUrl = getCheckoutUrl(planId, freqDays)
+    if (checkoutUrl) window.location.href = checkoutUrl
+  }
+
   const ctaText = loading
-    ? 'Abriendo Mercado Pago…'
+    ? 'Guardando tus datos…'
     : allValid
-      ? `Agregar tarjeta y pagar ${formatPrice(monthly)}`
+      ? `Agregar tarjeta y pagar ${formatPrice(monthly)}/mes`
       : 'Completa tus datos'
 
   return (
@@ -348,8 +364,22 @@ export function StepEntrega({
       </fieldset>
 
       {error && (
-        <span role="alert" className="pop" style={{ fontSize: 13, color: 'var(--error)', fontWeight: 700 }}>
+        <span role="alert" className="pop" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 6, fontSize: 13, color: 'var(--error)', fontWeight: 700 }}>
           {error}
+          {saveFailed && (
+            <button
+              type="button"
+              className="lnk"
+              onClick={payWithoutSaving}
+              style={{
+                minHeight: 44, border: 0, background: 'transparent', padding: 0,
+                fontFamily: 'inherit', fontSize: 13, fontWeight: 400, color: 'var(--ink)',
+                textDecoration: 'underline', textAlign: 'left', cursor: 'pointer',
+              }}
+            >
+              Ir a pagar de todas formas: te escribiremos para completar tus datos de entrega
+            </button>
+          )}
         </span>
       )}
 
@@ -407,7 +437,9 @@ export function StepEntrega({
       </div>
 
       <span style={{ fontSize: 12, lineHeight: 1.5, color: 'var(--text)' }}>
-        Se debita {freqLabel.toLowerCase()} con Mercado Pago. No guardamos datos de tu tarjeta.
+        {/* Los planes de MP cobran una vez al mes, también los quincenales (2 entregas por cobro). */}
+        Se debitan {formatPrice(monthly)} una vez al mes con Mercado Pago
+        {freqDays === 15 ? `, y cubren tus 2 entregas (${freqLabel.toLowerCase()}).` : '.'} No guardamos datos de tu tarjeta.
       </span>
       <span style={{ fontSize: 11, lineHeight: 1.5, color: 'var(--text)' }}>
         Al continuar aceptas el tratamiento de tus datos personales y recibir avisos de entrega por WhatsApp y email.

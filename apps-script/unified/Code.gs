@@ -77,16 +77,63 @@ function _handleForm(payload) {
     "Email factura": payload.billingEmail || "",
   };
 
-  var isNew = findSubscriberByEmail(payload.email) === null;
+  var existing = findSubscriberByEmail(payload.email);
+  var currentStatus = existing ? String(existing.fields["Estado"] || "") : "";
+
+  // Una fila que ya tiene un pago (Activo, Pausado o Excepción) nunca se reescribe
+  // desde el formulario: el endpoint es público y cualquiera que conozca el email
+  // podría cambiar la dirección o devolverla a "Pendiente de pago".
+  // Se avisa al equipo con los datos nuevos para que decida.
+  if (existing && PROTECTED_STATUSES.indexOf(currentStatus) !== -1) {
+    try { _notifyChangeRequest(record, existing); }
+    catch (mailErr) { console.error("Change request email failed: " + mailErr.message); }
+    return ContentService.createTextOutput(JSON.stringify({ status: "ok" }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
   upsertSubscriber(record);
 
-  if (isNew) {
+  if (!existing) {
     try { _notifyNewRegistration(record); }
     catch (mailErr) { console.error("Email notification failed: " + mailErr.message); }
   }
 
   return ContentService.createTextOutput(JSON.stringify({ status: "ok" }))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+var PROTECTED_STATUSES = ["Activo", "Pausado", "Excepción"];
+
+function _notifyChangeRequest(record, existing) {
+  var teamEmail = _PROPS.getProperty("TEAM_EMAIL");
+  if (!teamEmail) return;
+
+  var f = existing.fields;
+  MailApp.sendEmail(teamEmail,
+    "REVISAR: " + record["Email"] + " ya tiene una suscripción (" + f["Estado"] + ")",
+    [
+      "Alguien llenó el formulario con un email que ya tiene una suscripción en estado «" + f["Estado"] + "».",
+      "La fila del Sheet NO se modificó. Si es un cambio real, actualízala a mano.",
+      "Ojo: si además paga en Mercado Pago, quedará con DOS suscripciones activas.",
+      "",
+      "DATOS NUEVOS DEL FORMULARIO",
+      "Nombre: " + record["Nombre"],
+      "Teléfono: " + record["Teléfono"],
+      "Dirección: " + record["Dirección"] + ", " + record["Ciudad"],
+      "Plan: " + record["Tipo de suscripción"] + " / " + record["Plan"],
+      "Molienda: " + record["Molienda"],
+      "Frecuencia: " + record["Frecuencia"],
+      "Notas: " + record["Notas de entrega"],
+      "",
+      "DATOS ACTUALES EN EL SHEET (fila " + existing.row + ")",
+      "Nombre: " + (f["Nombre"] || ""),
+      "Teléfono: " + (f["Teléfono"] || ""),
+      "Dirección: " + (f["Dirección"] || "") + ", " + (f["Ciudad"] || ""),
+      "Plan: " + (f["Tipo de suscripción"] || "") + " / " + (f["Plan"] || ""),
+      "Molienda: " + (f["Molienda"] || ""),
+      "Frecuencia: " + (f["Frecuencia"] || ""),
+    ].join("\n")
+  );
 }
 
 function _validatePayload(payload) {
@@ -165,10 +212,15 @@ function _handleWebhook(e, body) {
   var subscriber = findSubscriberByEmail(payerEmail);
 
   if (subscriber) {
-    // Create dispatch record + update status
-    createDespacho(subscriber, payment);
+    // Un cobro mensual de un plan quincenal paga DOS entregas: se crean dos filas
+    // en Despachos (la segunda, 15 días después). Las dos llevan el mismo
+    // MP Payment ID, así que un webhook repetido no las duplica.
+    var schedule = _deliverySchedule(subscriber, payment);
+    for (var i = 0; i < schedule.length; i++) {
+      createDespacho(subscriber, payment, schedule[i]);
+    }
     updateSubscriberStatus(subscriber.row, "Activo");
-    _notifyTeamDespacho(subscriber, payment);
+    _notifyTeamDespacho(subscriber, payment, schedule);
 
     // First payment: send welcome email with discount code
     if (!subscriber.fields["Código descuento"]) {
@@ -187,6 +239,28 @@ function _handleWebhook(e, body) {
   }
 
   return _ok();
+}
+
+/**
+ * Entregas que paga un cobro. Mensual: 1. Quincenal: 2 (hoy y +15 días),
+ * porque los planes quincenales de MP cobran el mes completo de una vez.
+ */
+function _deliverySchedule(subscriber, payment) {
+  var paid = new Date(payment.date_approved || payment.date_created);
+  var freq = String(subscriber.fields["Frecuencia"] || "").toLowerCase();
+  if (freq !== "quincenal" && freq !== "15") {
+    return [{ date: paid, note: "" }];
+  }
+  var second = new Date(paid.getTime() + 15 * 24 * 60 * 60 * 1000);
+  return [
+    { date: paid, note: "Entrega 1 de 2 · despachar ya" },
+    { date: second, withoutAmount: true,
+      note: "Entrega 2 de 2 · NO despachar antes del " + _dateBogota(second) + " · pagada con el cobro del " + _dateBogota(paid) },
+  ];
+}
+
+function _dateBogota(date) {
+  return Utilities.formatDate(date, "America/Bogota", "yyyy-MM-dd");
 }
 
 function _fetchPayment(paymentId) {
@@ -209,10 +283,16 @@ function _ok() {
    WEBHOOK NOTIFICATIONS
    ══════════════════════════════════════════ */
 
-function _notifyTeamDespacho(subscriber, payment) {
+function _notifyTeamDespacho(subscriber, payment, schedule) {
   var f = subscriber.fields;
   var teamEmail = _PROPS.getProperty("TEAM_EMAIL");
   if (!teamEmail) return;
+
+  var deliveries = [];
+  if (schedule && schedule.length > 1) {
+    deliveries.push("", "ESTE COBRO PAGA " + schedule.length + " ENTREGAS:");
+    for (var i = 0; i < schedule.length; i++) deliveries.push("· " + schedule[i].note);
+  }
 
   MailApp.sendEmail({
     to: teamEmail,
@@ -229,9 +309,10 @@ function _notifyTeamDespacho(subscriber, payment) {
       "Teléfono: " + (f["Teléfono"] || ""),
       "Monto pagado: $" + (payment.transaction_amount || 0),
       "MP Payment ID: " + payment.id,
+    ].concat(deliveries, [
       "",
       "→ Abrir Google Sheet para marcar como despachado",
-    ].join("\n"),
+    ]).join("\n"),
   });
 }
 

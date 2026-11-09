@@ -17,35 +17,55 @@ const validPayload: SubscriptionPayload = {
   mpPlanId: 'diario-1kg',
 }
 
-const mockStorage = new Map<string, string>()
+/** Respuesta como la de Apps Script: siempre 200, el resultado va en el cuerpo. */
+function appsScriptReply(body: unknown) {
+  return { ok: true, json: async () => body }
+}
 
 beforeEach(() => {
   vi.restoreAllMocks()
-  mockStorage.clear()
-  vi.stubGlobal('localStorage', {
-    getItem: (key: string) => mockStorage.get(key) ?? null,
-    setItem: (key: string, value: string) => mockStorage.set(key, value),
-    removeItem: (key: string) => mockStorage.delete(key),
-    clear: () => mockStorage.clear(),
-    get length() { return mockStorage.size },
-    key: (index: number) => [...mockStorage.keys()][index] ?? null,
-  })
 })
 
 describe('submitSubscription', () => {
-  test('returns checkoutUrl on successful POST', async () => {
-    global.fetch = vi.fn().mockResolvedValue({ ok: true })
+  test('sends text/plain so the browser skips the CORS preflight', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(appsScriptReply({ status: 'ok' }))
+    global.fetch = fetchMock
+    await submitSubscription(validPayload, 'https://script.google.com/test')
+    const [, init] = fetchMock.mock.calls[0]
+    expect(init.method).toBe('POST')
+    expect(init.headers['Content-Type']).toMatch(/^text\/plain/)
+    expect(JSON.parse(init.body).email).toBe(validPayload.email)
+  })
+
+  test('success only when Apps Script answers status ok', async () => {
+    global.fetch = vi.fn().mockResolvedValue(appsScriptReply({ status: 'ok' }))
     const result = await submitSubscription(validPayload, 'https://script.google.com/test')
     expect(result.checkoutUrl).toContain('mpago.la')
     expect(result.success).toBe(true)
   })
 
-  test('saves to localStorage and returns URL on timeout', async () => {
+  test('reports rejected data with the Apps Script message', async () => {
+    global.fetch = vi.fn().mockResolvedValue(appsScriptReply({ status: 'error', message: 'Molienda inválida' }))
+    const result = await submitSubscription(validPayload, 'https://script.google.com/test')
+    expect(result.success).toBe(false)
+    expect(result.reason).toBe('rejected')
+    expect(result.message).toBe('Molienda inválida')
+    expect(result.checkoutUrl).toContain('mpago.la')
+  })
+
+  test('reports a network error (e.g. blocked by CORS) as not saved', async () => {
+    global.fetch = vi.fn().mockRejectedValue(new TypeError('Failed to fetch'))
+    const result = await submitSubscription(validPayload, 'https://script.google.com/test')
+    expect(result.success).toBe(false)
+    expect(result.reason).toBe('network')
+  })
+
+  test('reports a timeout as not saved', async () => {
     global.fetch = vi.fn().mockRejectedValue(new DOMException('Aborted', 'AbortError'))
     const result = await submitSubscription(validPayload, 'https://script.google.com/test')
     expect(result.success).toBe(false)
+    expect(result.reason).toBe('timeout')
     expect(result.checkoutUrl).toBeTruthy()
-    expect(localStorage.getItem(`sub_backup_${validPayload.email}`)).toBeTruthy()
   })
 
   test('throws on invalid plan/frequency combo', async () => {
@@ -54,7 +74,7 @@ describe('submitSubscription', () => {
   })
 
   test('especial-250 mensual returns checkout URL', async () => {
-    global.fetch = vi.fn().mockResolvedValue({ ok: true })
+    global.fetch = vi.fn().mockResolvedValue(appsScriptReply({ status: 'ok' }))
     const payload = { ...validPayload, mpPlanId: 'especial-250', frequency: 30, price: 80000 }
     const result = await submitSubscription(payload, 'https://script.google.com/test')
     expect(result.checkoutUrl).toContain('mpago.la')

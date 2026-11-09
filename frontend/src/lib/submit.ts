@@ -7,6 +7,9 @@ export interface SubscriptionPayload {
   address: string
   city: string
   deliveryNotes: string
+  billingNit?: string
+  billingName?: string
+  billingEmail?: string
   subscriptionType: string
   plan: string
   coffee: string
@@ -16,12 +19,22 @@ export interface SubscriptionPayload {
   mpPlanId: string
 }
 
-const TIMEOUT_MS = 2500
+export type SubmitResult = {
+  /** true solo si el Apps Script confirmó que guardó la fila ({ status: "ok" }). */
+  success: boolean
+  checkoutUrl: string
+  reason?: 'timeout' | 'network' | 'rejected'
+  /** Mensaje de validación del Apps Script cuando rechaza los datos. */
+  message?: string
+}
+
+// Apps Script puede tardar varios segundos cuando lleva rato sin usarse.
+const TIMEOUT_MS = 12000
 
 export async function submitSubscription(
   payload: SubscriptionPayload,
   appsScriptUrl: string
-): Promise<{ success: boolean; checkoutUrl: string }> {
+): Promise<SubmitResult> {
   const checkoutUrl = getCheckoutUrl(payload.mpPlanId, payload.frequency)
   if (!checkoutUrl) {
     throw new Error('Invalid plan/frequency combination')
@@ -31,35 +44,30 @@ export async function submitSubscription(
   const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS)
 
   try {
+    // text/plain y no application/json: con JSON el navegador hace una
+    // verificación previa (OPTIONS) que Apps Script responde sin permiso CORS,
+    // y cancela el envío. Apps Script lee el cuerpo igual en e.postData.contents.
     const response = await fetch(appsScriptUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(payload),
       signal: controller.signal,
     })
 
-    clearTimeout(timeoutId)
-
-    if (response.ok) {
-      return { success: true, checkoutUrl }
+    if (!response.ok) {
+      return { success: false, checkoutUrl, reason: 'network' }
     }
 
-    saveBackup(payload)
-    return { success: false, checkoutUrl }
-  } catch {
+    // Apps Script responde 200 también cuando rechaza los datos: hay que leer el cuerpo.
+    const data = await response.json().catch(() => null) as { status?: string; message?: string } | null
+    if (data?.status === 'ok') {
+      return { success: true, checkoutUrl }
+    }
+    return { success: false, checkoutUrl, reason: 'rejected', message: data?.message }
+  } catch (err) {
+    const aborted = err instanceof DOMException && err.name === 'AbortError'
+    return { success: false, checkoutUrl, reason: aborted ? 'timeout' : 'network' }
+  } finally {
     clearTimeout(timeoutId)
-    saveBackup(payload)
-    return { success: false, checkoutUrl }
-  }
-}
-
-function saveBackup(payload: SubscriptionPayload): void {
-  try {
-    localStorage.setItem(
-      `sub_backup_${payload.email}`,
-      JSON.stringify({ ...payload, savedAt: new Date().toISOString() })
-    )
-  } catch {
-    // localStorage might be full or unavailable — silent fail
   }
 }
