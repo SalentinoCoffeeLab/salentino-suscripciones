@@ -8,13 +8,13 @@ const validPayload: SubscriptionPayload = {
   address: 'Calle 10 #40-20',
   city: 'Medellín',
   deliveryNotes: '',
-  subscriptionType: 'Suministro',
-  plan: 'Familiar',
-  coffee: 'Caturra Lavado',
+  subscriptionType: 'Café de Diario',
+  plan: '1 KG',
+  coffee: 'Caturra Lavado Tradicional',
   grind: 'V60',
-  frequency: 14,
-  price: 105000,
-  mpPlanId: 'suministro-familiar',
+  frequency: 15,
+  price: 230000,
+  mpPlanId: 'diario-1kg',
 }
 
 const mockStorage = new Map<string, string>()
@@ -36,7 +36,7 @@ describe('submitSubscription', () => {
   test('returns checkoutUrl on successful POST', async () => {
     global.fetch = vi.fn().mockResolvedValue({ ok: true })
     const result = await submitSubscription(validPayload, 'https://script.google.com/test')
-    expect(result.checkoutUrl).toContain('mercadopago')
+    expect(result.checkoutUrl).toContain('mpago.la')
     expect(result.success).toBe(true)
   })
 
@@ -49,7 +49,7 @@ describe('submitSubscription', () => {
   })
 
   test('throws on invalid plan/frequency combo', async () => {
-    const bad = { ...validPayload, mpPlanId: 'lab-discovery', frequency: 7 }
+    const bad = { ...validPayload, mpPlanId: 'especial-250', frequency: 30 }
     await expect(submitSubscription(bad, 'https://script.google.com/test')).rejects.toThrow('Invalid plan/frequency')
   })
 })

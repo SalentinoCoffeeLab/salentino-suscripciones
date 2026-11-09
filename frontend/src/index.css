@@ -1,31 +1,118 @@
 :root {
-  font-family: 'Space Mono', monospace;
-  font-size: 16px;
-  line-height: 1.5;
-  color: #1a1a1a;
-  background: #faf8f5;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --bg: #F9F4ED;
+  --bg2: #F5EFE6;
+  --ink: #0A0A0A;
+  --text: #5E4B47;
+  --accent: #EC6E25;
+  --line: #D9D2C8;
+  --card: #FFFFFF;
+  --error: #DC2626;
+  --ok: #1F7A3F;
+  --font: "Space Mono", ui-monospace, Menlo, monospace;
 }
 
-* {
-  box-sizing: border-box;
+html, body { overflow-x: clip; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); }
+* { box-sizing: border-box; }
+
+a { color: var(--ink); }
+a:hover { color: var(--accent); }
+button, input, textarea { font-family: var(--font); color: var(--ink); }
+
+/* Labels */
+.lbl { display: block; font-size: 11px; font-weight: 700; letter-spacing: .08em; margin-bottom: 8px; }
+
+/* Inputs */
+.inp {
+  width: 100%; box-sizing: border-box;
+  border: 1px solid var(--ink); border-radius: 12px;
+  background: transparent; padding: 12px 44px 12px 16px;
+  font-size: 14px; transition: border-color .2s ease-out;
+}
+.inp[aria-invalid="true"] { border-color: var(--error); }
+
+/* Selection pills (step 2 options) */
+.pill2 {
+  min-height: 52px; padding: 8px 14px; border-radius: 12px;
+  border: 1px solid var(--ink); cursor: pointer;
+  font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; text-align: center;
+  background: transparent;
+  transition: background-color .2s ease-out, color .2s ease-out;
 }
 
-body {
-  margin: 0;
+/* Fieldsets */
+.fs {
+  margin: 0; border: 1px solid var(--ink); border-radius: 18px;
+  background: transparent; padding: 26px 22px 22px;
+  display: flex; flex-direction: column; gap: 14px; min-width: 0;
+}
+.fs legend {
+  padding: 6px 12px; font-size: 12px; font-weight: 700; letter-spacing: .08em;
+  background: var(--ink); color: var(--bg); border-radius: 8px; margin-left: -6px;
+}
+.fs legend b { color: var(--accent); margin-right: 6px; }
+
+/* Big CTA button */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 54px; border: 0; border-radius: 12px;
+  background: var(--accent); color: var(--ink);
+  font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+  text-decoration: none; cursor: pointer;
+}
+.btn[disabled] { opacity: .55; cursor: not-allowed; }
+
+/* Line selection cards */
+.lab-card {
+  cursor: pointer; text-align: left;
 }
 
-#root {
-  max-width: 100%;
-  margin: 0 auto;
+/* Title */
+.ttl {
+  margin: 0; font-size: 64px; line-height: .95; font-weight: 700;
+  text-transform: uppercase; overflow-wrap: break-word; min-width: 0;
 }
 
-/* Hide scrollbar on mobile carousel */
-[role="list"] {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+/* Two-column layout */
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 36px; align-items: start; }
+
+/* Link buttons */
+.lnk:hover .ic { transform: translateX(3px) scale(1.2); }
+
+/* Icon animation — hover only expands icons, no background/shadow on parent */
+.ic { display: inline-flex; align-items: center; transition: transform .2s ease-out; transform-origin: center; }
+.lab-card:hover .ic { transform: scale(1.25); }
+.btn:hover .ic { transform: translateX(4px) scale(1.2); }
+.pill2:hover .ic, .pill2:focus-visible .ic { transform: scale(1.2); }
+
+/* Pop animation */
+.pop { animation: pop .3s ease-out; }
+@keyframes pop { 0% { opacity: .4; transform: scale(.97); } 100% { opacity: 1; transform: scale(1); } }
+
+/* Focus */
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+aside :focus-visible { outline-color: #FFFFFF; }
+
+/* Mobile overrides */
+.only-m { display: none; }
+@media (max-width: 639px) {
+  .only-d { display: none !important; }
+  .only-m { display: flex; }
+  .inp { font-size: 16px; }
+  .ttl { font-size: 30px; }
+  .cols { grid-template-columns: 1fr; }
+  .fs { padding: 16px; }
 }
-[role="list"]::-webkit-scrollbar {
-  display: none;
+@media (max-width: 900px) {
+  .cols { grid-template-columns: 1fr; }
+  .ttl { font-size: 38px; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+  .ic { transition: none; }
+  .lab-card:hover .ic, .btn:hover .ic, .lnk:hover .ic, .pill2:hover .ic { transform: none; }
 }

@@ -1,25 +1,51 @@
 import { describe, test, expect } from 'vitest'
-import { SALENTINO_PLANS, getPlanById, getCheckoutUrl } from '../data/plans'
+import {
+  SALENTINO_PLANS,
+  getPlanById,
+  getPlansForLine,
+  getCheckoutUrl,
+  getMonthlyPrice,
+  formatPrice,
+} from '../data/plans'
 
 describe('SALENTINO_PLANS', () => {
-  test('all 6 plans have required fields', () => {
-    expect(SALENTINO_PLANS).toHaveLength(6)
+  test('all 4 plans have required fields', () => {
+    expect(SALENTINO_PLANS).toHaveLength(4)
     SALENTINO_PLANS.forEach(plan => {
       expect(plan.id).toBeTruthy()
       expect(plan.name).toBeTruthy()
-      expect(plan.price).toBeTruthy()
-      expect(plan.tier).toBeGreaterThanOrEqual(1)
-      expect(plan.tier).toBeLessThanOrEqual(5)
+      expect(plan.line).toMatch(/^(diario|especial)$/)
+      expect(plan.code).toMatch(/^(SUM|LAB)-0[12]$/)
+      expect(plan.priceFrom).toBeGreaterThan(0)
+      expect(plan.frequencies.length).toBeGreaterThan(0)
       expect(plan.image).toBeTruthy()
+    })
+  })
+
+  test('diario plans have quincenal + mensual, especial plans have one frequency each', () => {
+    SALENTINO_PLANS.forEach(plan => {
+      if (plan.line === 'diario') {
+        expect(plan.frequencies).toEqual([15, 30])
+      } else if (plan.id === 'especial-250') {
+        expect(plan.frequencies).toEqual([15])
+      } else {
+        expect(plan.frequencies).toEqual([30])
+      }
     })
   })
 })
 
 describe('getPlanById', () => {
-  test('returns correct plan for suministro-familiar', () => {
-    const plan = getPlanById('suministro-familiar')
-    expect(plan?.price).toBe('$105,000/envío')
-    expect(plan?.tier).toBe(2)
+  test('returns correct plan for diario-454', () => {
+    const plan = getPlanById('diario-454')
+    expect(plan?.priceFrom).toBe(72000)
+    expect(plan?.code).toBe('SUM-01')
+  })
+
+  test('returns correct plan for especial-500', () => {
+    const plan = getPlanById('especial-500')
+    expect(plan?.priceFrom).toBe(160000)
+    expect(plan?.code).toBe('LAB-02')
   })
 
   test('returns undefined for unknown id', () => {
@@ -27,18 +53,60 @@ describe('getPlanById', () => {
   })
 })
 
+describe('getPlansForLine', () => {
+  test('returns 2 diario plans', () => {
+    const plans = getPlansForLine('diario')
+    expect(plans).toHaveLength(2)
+    plans.forEach(p => expect(p.line).toBe('diario'))
+  })
+
+  test('returns 2 especial plans', () => {
+    const plans = getPlansForLine('especial')
+    expect(plans).toHaveLength(2)
+    plans.forEach(p => expect(p.line).toBe('especial'))
+  })
+})
+
 describe('getCheckoutUrl', () => {
-  test('returns URL for valid suministro combo', () => {
-    const url = getCheckoutUrl('suministro-familiar', 14)
-    expect(url).toContain('mercadopago')
+  test('returns URL for valid diario combo', () => {
+    const url = getCheckoutUrl('diario-1kg', 15)
+    expect(url).toContain('mpago.la')
   })
 
-  test('returns undefined for Lab Series weekly (invalid combo)', () => {
-    expect(getCheckoutUrl('lab-discovery', 7)).toBeUndefined()
+  test('returns undefined for invalid frequency', () => {
+    expect(getCheckoutUrl('especial-250', 30)).toBeUndefined()
+    expect(getCheckoutUrl('especial-500', 15)).toBeUndefined()
   })
 
-  test('returns URL for Lab Series quincenal (valid combo)', () => {
-    const url = getCheckoutUrl('lab-discovery', 14)
-    expect(url).toContain('mercadopago')
+  test('returns URL for especial-250 quincenal', () => {
+    const url = getCheckoutUrl('especial-250', 15)
+    expect(url).toContain('mpago.la')
+  })
+
+  test('returns URL for especial-500 mensual', () => {
+    const url = getCheckoutUrl('especial-500', 30)
+    expect(url).toContain('mpago.la')
+  })
+})
+
+describe('getMonthlyPrice', () => {
+  test('454g quincenal costs 140000/month', () => {
+    expect(getMonthlyPrice('diario-454', 15)).toBe(140000)
+  })
+
+  test('454g mensual costs 72000/month', () => {
+    expect(getMonthlyPrice('diario-454', 30)).toBe(72000)
+  })
+
+  test('returns undefined for invalid combo', () => {
+    expect(getMonthlyPrice('especial-250', 30)).toBeUndefined()
+  })
+})
+
+describe('formatPrice', () => {
+  test('formats COP price', () => {
+    const formatted = formatPrice(70000)
+    expect(formatted).toContain('$')
+    expect(formatted).toContain('70')
   })
 })

@@ -1,103 +1,108 @@
 export interface CoffeePlan {
   id: string
+  line: 'diario' | 'especial'
+  code: string
   name: string
   description: string
-  price: string
-  tier: 1 | 2 | 3 | 4 | 5
+  weight: string
+  priceFrom: number
+  frequencies: number[]
+  meta: string[]
   image: string
-  details: string[]
+  cupsPerShipment: number
 }
 
 export const SALENTINO_PLANS: CoffeePlan[] = [
   {
-    id: 'suministro-medio',
-    name: 'Suministro Medio',
-    description: '454g de tu café favorito. Molienda a tu medida.',
-    price: '$60,000/envío',
-    tier: 1,
+    id: 'diario-454',
+    line: 'diario',
+    code: 'SUM-01',
+    name: '454 g',
+    description: 'Perfil fijo · Alto rendimiento',
+    weight: '454g',
+    priceFrom: 72000,
+    frequencies: [15, 30],
+    meta: ['RENDIMIENTO: ~30 tazas', 'PERFIL: Caturra Lavado Tradicional'],
     image: '/assets/plan-454g.webp',
-    details: ['454g', 'Tú eliges', 'Semanal · Quincenal · Mensual'],
+    cupsPerShipment: 30,
   },
   {
-    id: 'suministro-familiar',
-    name: 'Suministro Familiar',
-    description: '1 kilo completo de café fresco. Envío gratis.',
-    price: '$105,000/envío',
-    tier: 2,
+    id: 'diario-1kg',
+    line: 'diario',
+    code: 'SUM-02',
+    name: '1 kg',
+    description: 'Perfil fijo · Alto rendimiento',
+    weight: '1kg',
+    priceFrom: 115000,
+    frequencies: [15, 30],
+    meta: ['RENDIMIENTO: ~66 tazas', 'PERFIL: Caturra Lavado Tradicional'],
     image: '/assets/plan-1kg.webp',
-    details: ['1kg', 'Tú eliges', 'Envío gratis', 'Más popular'],
+    cupsPerShipment: 66,
   },
   {
-    id: 'suministro-abastecimiento',
-    name: 'Suministro Abastecimiento',
-    description: '2 kilos para que nunca te falte. Envío gratis + prioridad.',
-    price: '$195,000/envío',
-    tier: 4,
-    image: '/assets/plan-2kg.webp',
-    details: ['2kg', 'Tú eliges', 'Envío gratis', 'Prioridad de despacho'],
-  },
-  {
-    id: 'lab-discovery',
-    name: 'Lab Series Discovery',
-    description: '250g de un lote exclusivo curado por el tostador. Incluye tarjeta editorial.',
-    price: '$68,000/envío',
-    tier: 3,
+    id: 'especial-250',
+    line: 'especial',
+    code: 'LAB-01',
+    name: '1 bolsa',
+    description: 'Micro-lotes y varietales rotativos',
+    weight: '250g',
+    priceFrom: 180000,
+    frequencies: [15],
+    meta: ['RENDIMIENTO: ~16 tazas', 'ROTACIÓN: 1 perfil exclusivo por entrega'],
     image: '/assets/plan-lab-250g.webp',
-    details: ['250g', 'El tostador elige', 'Lotes exclusivos'],
+    cupsPerShipment: 16,
   },
   {
-    id: 'lab-ritual',
-    name: 'Lab Series Ritual',
-    description: '454g curados por el tostador. Early access a nuevos lotes.',
-    price: '$110,000/envío',
-    tier: 4,
-    image: '/assets/plan-lab-454g.webp',
-    details: ['454g', 'El tostador elige', 'Early access', 'Más popular'],
-  },
-  {
-    id: 'lab-contraste',
-    name: 'Lab Series Contraste',
-    description: '2 bolsas de 250g con perfiles distintos + guía comparativa. Cupping semestral.',
-    price: '$125,000/envío',
-    tier: 5,
+    id: 'especial-500',
+    line: 'especial',
+    code: 'LAB-02',
+    name: '2 bolsas',
+    description: 'Micro-lotes y varietales rotativos',
+    weight: '500g',
+    priceFrom: 160000,
+    frequencies: [30],
+    meta: ['RENDIMIENTO: ~33 tazas', 'ROTACIÓN: 2 perfiles distintos por entrega'],
     image: '/assets/plan-lab-2x250g.webp',
-    details: ['2×250g', 'El tostador elige', 'Guía comparativa', 'Cupping semestral'],
+    cupsPerShipment: 33,
   },
 ]
 
-// Map plan IDs to MP plan key prefixes
 const PLAN_KEY_MAP: Record<string, { prefix: string; frequencies: number[] }> = {
-  'suministro-medio': { prefix: 'suministro_454', frequencies: [7, 14, 30] },
-  'suministro-familiar': { prefix: 'suministro_1000', frequencies: [7, 14, 30] },
-  'suministro-abastecimiento': { prefix: 'suministro_2000', frequencies: [7, 14, 30] },
-  'lab-discovery': { prefix: 'lab_discovery', frequencies: [14, 30] },
-  'lab-ritual': { prefix: 'lab_ritual', frequencies: [14, 30] },
-  'lab-contraste': { prefix: 'lab_contraste', frequencies: [14, 30] },
+  'diario-454': { prefix: 'diario_454', frequencies: [15, 30] },
+  'diario-1kg': { prefix: 'diario_1kg', frequencies: [15, 30] },
+  'especial-250': { prefix: 'especial_250', frequencies: [15] },
+  'especial-500': { prefix: 'especial_500', frequencies: [30] },
 }
 
-// Loaded from mercadopago/plans-catalog.json at build time
-// In production, replace PENDING URLs with real MP checkout URLs
-const MP_LOOKUP: Record<string, { planId: string; checkoutUrl: string; price: number }> = {
-  suministro_454_7: { planId: 'PENDING', checkoutUrl: 'https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_454_7', price: 60000 },
-  suministro_454_14: { planId: 'PENDING', checkoutUrl: 'https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_454_14', price: 60000 },
-  suministro_454_30: { planId: 'PENDING', checkoutUrl: 'https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_454_30', price: 60000 },
-  suministro_1000_7: { planId: 'PENDING', checkoutUrl: 'https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_1000_7', price: 105000 },
-  suministro_1000_14: { planId: 'PENDING', checkoutUrl: 'https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_1000_14', price: 105000 },
-  suministro_1000_30: { planId: 'PENDING', checkoutUrl: 'https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_1000_30', price: 105000 },
-  suministro_2000_7: { planId: 'PENDING', checkoutUrl: 'https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_2000_7', price: 195000 },
-  suministro_2000_14: { planId: 'PENDING', checkoutUrl: 'https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_2000_14', price: 195000 },
-  suministro_2000_30: { planId: 'PENDING', checkoutUrl: 'https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_2000_30', price: 195000 },
-  lab_discovery_14: { planId: 'PENDING', checkoutUrl: 'https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_disc_14', price: 68000 },
-  lab_discovery_30: { planId: 'PENDING', checkoutUrl: 'https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_disc_30', price: 68000 },
-  lab_ritual_14: { planId: 'PENDING', checkoutUrl: 'https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_rit_14', price: 110000 },
-  lab_ritual_30: { planId: 'PENDING', checkoutUrl: 'https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_rit_30', price: 110000 },
-  lab_contraste_14: { planId: 'PENDING', checkoutUrl: 'https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_con_14', price: 125000 },
-  lab_contraste_30: { planId: 'PENDING', checkoutUrl: 'https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_con_30', price: 125000 },
-  migration_podio_ritual: { planId: 'PENDING', checkoutUrl: 'https://www.mercadopago.com.co/subscriptions/checkout?preapproval_plan_id=PENDING_mig', price: 90000 },
+const MP_LOOKUP: Record<string, { checkoutUrl: string; monthlyPrice: number }> = {
+  diario_454_15: { checkoutUrl: 'https://mpago.la/2NxCn4C', monthlyPrice: 140000 },
+  diario_454_30: { checkoutUrl: 'https://mpago.la/146kVHk', monthlyPrice: 72000 },
+  diario_1kg_15: { checkoutUrl: 'https://mpago.la/2qFkE4a', monthlyPrice: 230000 },
+  diario_1kg_30: { checkoutUrl: 'https://mpago.la/1gzdvvs', monthlyPrice: 115000 },
+  especial_250_15: { checkoutUrl: 'https://mpago.la/1fUumqj', monthlyPrice: 180000 },
+  especial_500_30: { checkoutUrl: 'https://mpago.la/1LmZd4D', monthlyPrice: 160000 },
 }
 
 export function getPlanById(id: string): CoffeePlan | undefined {
   return SALENTINO_PLANS.find(p => p.id === id)
+}
+
+export function getPlansForLine(line: 'diario' | 'especial'): CoffeePlan[] {
+  return SALENTINO_PLANS.filter(p => p.line === line)
+}
+
+export function getMonthlyPrice(planId: string, frequency: number): number | undefined {
+  const mapping = PLAN_KEY_MAP[planId]
+  if (!mapping || !mapping.frequencies.includes(frequency)) return undefined
+  const key = `${mapping.prefix}_${frequency}`
+  return MP_LOOKUP[key]?.monthlyPrice
+}
+
+export function getPerShipmentPrice(planId: string, frequency: number): number | undefined {
+  const monthly = getMonthlyPrice(planId, frequency)
+  if (monthly === undefined) return undefined
+  const deliveries = frequency === 15 ? 2 : 1
+  return Math.round(monthly / deliveries)
 }
 
 export function getCheckoutUrl(planId: string, frequency: number): string | undefined {
@@ -117,3 +122,170 @@ export function getMpPlanKey(planId: string, frequency: number): string | undefi
   if (!mapping || !mapping.frequencies.includes(frequency)) return undefined
   return `${mapping.prefix}_${frequency}`
 }
+
+export function formatPrice(amount: number): string {
+  const str = String(Math.round(amount))
+  let out = ''
+  let rem = str
+  while (rem.length > 3) {
+    out = '.' + rem.slice(-3) + out
+    rem = rem.slice(0, -3)
+  }
+  return '$' + rem + out
+}
+
+/* ── Frequency data ── */
+
+export interface FrequencyOption {
+  id: string
+  label: string
+  days: number
+  deliveriesPerMonth: number
+}
+
+export function getFrequencyOptions(line: 'diario' | 'especial'): FrequencyOption[] {
+  if (line === 'diario') {
+    return [
+      { id: 'quincenal', label: 'Cada 15 días', days: 15, deliveriesPerMonth: 2 },
+      { id: 'mensual', label: 'Cada mes', days: 30, deliveriesPerMonth: 1 },
+    ]
+  }
+  return [
+    { id: 'quincenal', label: 'Cada 15 días', days: 15, deliveriesPerMonth: 2 },
+    { id: 'mensual', label: 'Cada mes', days: 30, deliveriesPerMonth: 1 },
+  ]
+}
+
+/* ── Cups recommendation engine ── */
+
+export interface CupsOption {
+  id: string
+  label: string
+  cupsPerMonth: number
+}
+
+export const CUPS_OPTIONS: CupsOption[] = [
+  { id: 'menos', label: 'Menos de 1', cupsPerMonth: 15 },
+  { id: '1', label: '1 taza', cupsPerMonth: 30 },
+  { id: '2', label: '2 tazas', cupsPerMonth: 60 },
+  { id: '3', label: '3 o más', cupsPerMonth: 105 },
+]
+
+export interface Recommendation {
+  plan: CoffeePlan
+  frequency: FrequencyOption
+  cupsPerMonth: number
+  monthlyPrice: number
+  isShort: boolean
+}
+
+export function recommendPlan(line: 'diario' | 'especial', cupsNeeded: number): Recommendation {
+  const plans = getPlansForLine(line)
+  const freqs = getFrequencyOptions(line)
+
+  const combos: Array<{
+    plan: CoffeePlan
+    freq: FrequencyOption
+    cups: number
+    cost: number
+  }> = []
+
+  for (const plan of plans) {
+    for (const freq of freqs) {
+      if (!plan.frequencies.includes(freq.days)) continue
+      const monthly = getMonthlyPrice(plan.id, freq.days)
+      if (monthly === undefined) continue
+      combos.push({
+        plan,
+        freq,
+        cups: plan.cupsPerShipment * freq.deliveriesPerMonth,
+        cost: monthly,
+      })
+    }
+  }
+
+  const sufficient = combos.filter(c => c.cups >= cupsNeeded)
+
+  if (sufficient.length > 0) {
+    sufficient.sort((a, b) => a.cost - b.cost || a.cups - b.cups)
+    const best = sufficient[0]
+    return {
+      plan: best.plan,
+      frequency: best.freq,
+      cupsPerMonth: best.cups,
+      monthlyPrice: best.cost,
+      isShort: false,
+    }
+  }
+
+  combos.sort((a, b) => b.cups - a.cups)
+  const biggest = combos[0]
+  return {
+    plan: biggest.plan,
+    frequency: biggest.freq,
+    cupsPerMonth: biggest.cups,
+    monthlyPrice: biggest.cost,
+    isShort: true,
+  }
+}
+
+/* ── Grind options ── */
+
+export interface GrindOption {
+  id: string
+  label: string
+  sub: string
+}
+
+export const GRIND_OPTIONS: GrindOption[] = [
+  { id: 'grano', label: 'Grano entero', sub: 'Sin moler' },
+  { id: 'prensa', label: 'Prensa', sub: 'Gruesa' },
+  { id: 'aeropress', label: 'Aeropress', sub: 'Media' },
+  { id: 'v60', label: 'V60 / filtro', sub: 'Media-fina' },
+  { id: 'espresso', label: 'Espresso', sub: 'Fina' },
+]
+
+/* ── Line metadata ── */
+
+export interface LineInfo {
+  key: 'diario' | 'especial'
+  name: string
+  code: string
+  kicker: string
+  from: string
+  meta: string[]
+  coffee: string
+}
+
+export const LINE_INFO: Record<string, LineInfo> = {
+  diario: {
+    key: 'diario',
+    name: 'Café de diario',
+    code: 'SUM',
+    kicker: 'PERFIL FIJO / MDE — COL',
+    from: 'Desde $70.000 por entrega',
+    meta: [
+      'CAFÉ: Caturra Lavado Tradicional',
+      'ORIGEN: Salento, Quindío',
+      'NOTAS: Chocolate amargo, caramelo, panela',
+      'PERFIL: el mismo en cada entrega',
+    ],
+    coffee: 'Caturra Lavado Tradicional',
+  },
+  especial: {
+    key: 'especial',
+    name: 'Ediciones especiales',
+    code: 'LAB',
+    kicker: 'ROTATIVO / MICRO-LOTES',
+    from: 'Desde $80.000 por entrega',
+    meta: [
+      'CAFÉ: micro-lotes y varietales',
+      'ORIGEN: rota entre los lotes disponibles',
+      'NOTAS: cada bolsa llega con su nota de cata',
+      'PERFIL: cambia en cada entrega',
+    ],
+    coffee: 'Selección del tostador',
+  },
+}
+
+export const CITIES = ['Medellín', 'Envigado', 'Sabaneta', 'Itagüí', 'Bello', 'Otra ciudad']
