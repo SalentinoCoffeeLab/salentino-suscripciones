@@ -86,13 +86,20 @@ export function StepCafe({ selectedLine, onSelectLine, onContinue }: StepCafePro
               </span>
 
               <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
-                <span style={{ fontSize: 15, fontWeight: 700 }}>{info.from}</span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, fontWeight: 700, letterSpacing: '0.06em' }}>
+                <span style={{ fontSize: 20, fontWeight: 700 }}>{info.from}</span>
+                <span style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  fontSize: 13, fontWeight: 700, letterSpacing: '0.06em',
+                  background: isActive ? '#0A0A0A' : 'transparent',
+                  color: isActive ? '#F9F4ED' : '#0A0A0A',
+                  border: '1.5px solid #0A0A0A',
+                  borderRadius: 40, padding: '8px 16px',
+                }}>
                   <span className="ic">
                     <span style={{
-                      display: 'inline-block', width: 12, height: 12, borderRadius: '50%',
-                      border: '1.5px solid #0A0A0A',
-                      background: isActive ? '#0A0A0A' : 'transparent',
+                      display: 'inline-block', width: 14, height: 14, borderRadius: '50%',
+                      border: `2px solid ${isActive ? '#EC6E25' : '#0A0A0A'}`,
+                      background: isActive ? '#EC6E25' : 'transparent',
                     }} />
                   </span>
                   {isActive ? 'SELECCIONADO' : 'ELEGIR'}
