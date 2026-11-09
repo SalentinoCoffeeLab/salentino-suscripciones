@@ -75,7 +75,7 @@ export function StepConfigura({
   return (
     <>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <h1 className="h1-step" style={{ margin: 0, fontSize: 28, fontWeight: 700 }}>
+        <h1 className="h1-step" style={{ margin: 0, fontSize: 26, fontWeight: 700, letterSpacing: '-0.02em' }}>
           Configura tu <span style={{ color: 'var(--accent)' }}>plan</span>
         </h1>
         <p className="p-step" style={{ margin: 0, maxWidth: 520, fontSize: 16, lineHeight: 1.5, color: 'var(--text)' }}>
@@ -201,14 +201,14 @@ export function StepConfigura({
           className="step-enter"
           style={{
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            padding: '14px 18px', borderRadius: 12,
-            background: 'var(--ink)', color: '#F9F4ED',
+            padding: '14px 18px', borderRadius: 10,
+            background: 'var(--ink)', color: 'var(--bg)',
           }}
         >
-          <span style={{ fontSize: 14 }}>
+          <span style={{ fontSize: 13 }}>
             {selectedPlan!.name}, {selectedFreq!.label.toLowerCase()}
           </span>
-          <span style={{ fontSize: 20, fontWeight: 700, color: '#EC6E25' }}>
+          <span style={{ fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em' }}>
             {formatPrice(monthly)}/mes
           </span>
         </div>
