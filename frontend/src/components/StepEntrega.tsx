@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 import { formatPrice, getMonthlyPrice, getPerShipmentPrice, getCheckoutUrl, getMpPlanKey, getPlanById, LINE_INFO, GRIND_OPTIONS, CITIES } from '../data/plans'
 import { submitSubscription } from '../lib/submit'
+import { validateNit } from '../lib/nit'
 
 interface StepEntregaProps {
   planId: string
@@ -72,12 +73,15 @@ export function StepEntrega({
   const perShipment = getPerShipmentPrice(planId, freqDays) ?? 0
   const grindLabel = GRIND_OPTIONS.find(g => g.id === grindId)?.label ?? grindId
 
+  const nitResult = wantsBilling ? validateNit(billingNit) : null
+
   const valid = {
     email: /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email),
     name: name.trim().length >= 3,
     phone: digits(phone).length >= 7,
     address: address.trim().length >= 5,
     city: city.trim().length >= 3,
+    billingNit: !wantsBilling || (nitResult !== null && nitResult.valid),
   }
 
   const allValid = Object.values(valid).every(Boolean)
@@ -88,6 +92,7 @@ export function StepEntrega({
     phone: 'Al menos 7 dígitos.',
     address: 'Escribe calle y número, por ejemplo Calle 10 #40-20.',
     city: 'Escribe tu ciudad o municipio.',
+    billingNit: nitResult && !nitResult.valid ? nitResult.error : 'Escribe tu NIT o cédula.',
   }
 
   const dom = (email.split('@')[1] || '').toLowerCase()
@@ -127,7 +132,7 @@ export function StepEntrega({
           address,
           city,
           deliveryNotes: notes,
-          ...(wantsBilling ? { billingNit, billingName: billingName || name, billingEmail: billingEmail || email } : {}),
+          ...(wantsBilling && nitResult?.valid ? { billingNit: nitResult.formatted, billingName: billingName || name, billingEmail: billingEmail || email } : {}),
           subscriptionType: line === 'especial' ? 'Ediciones Especiales' : 'Café de Diario',
           plan: plan.name,
           coffee: lineInfo.coffee,
@@ -337,8 +342,13 @@ export function StepEntrega({
                   placeholder="900.123.456-7 o 1.234.567.890"
                   value={billingNit}
                   onChange={e => { setBillingNit(e.target.value); startTyping() }}
-                  onBlur={() => onTypingChange(false)}
+                  onBlur={() => { blur('billingNit') }}
+                  aria-invalid={touched.billingNit && !valid.billingNit}
+                  aria-describedby="e-nit"
                 />
+                <span id="e-nit" style={{ display: 'block', minHeight: 14, marginTop: 3, paddingLeft: 16, fontSize: 11, color: !valid.billingNit ? 'var(--error)' : 'var(--ok)' }}>
+                  {touched.billingNit && !valid.billingNit ? msgs.billingNit : billingNit && valid.billingNit && nitResult?.valid ? `✓ ${nitResult.formatted}` : ''}
+                </span>
               </div>
               <div>
                 <label className="lbl" htmlFor="x-bname">RAZÓN SOCIAL O NOMBRE</label>
