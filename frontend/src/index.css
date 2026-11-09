@@ -107,12 +107,21 @@ textarea.inp { min-height: 70px; line-height: 1.5; }
 
 /* Liquid glass effect (stepper active pill) */
 .glass-pill {
-  background: rgba(249, 244, 237, 0.55);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid rgba(249, 244, 237, 0.6);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.65) 0%,
+    rgba(249, 244, 237, 0.45) 50%,
+    rgba(236, 110, 37, 0.12) 100%
+  );
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
   border-radius: 40px;
-  box-shadow: 0 1px 8px rgba(10, 10, 10, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  box-shadow:
+    0 4px 16px rgba(10, 10, 10, 0.10),
+    0 1px 3px rgba(10, 10, 10, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(10, 10, 10, 0.04);
 }
 
 /* Mobile bottom bar glass variant */
