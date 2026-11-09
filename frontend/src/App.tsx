@@ -13,7 +13,7 @@ import { StepEntrega } from './components/StepEntrega'
 
 const APPS_SCRIPT_URL =
   import.meta.env.VITE_APPS_SCRIPT_URL ||
-  'https://script.google.com/macros/s/AKfycbxByZJX2nvM-nUBoVyAKPM3gN2zSAghVmCcu3zRcbLLFnWMRZhaKasH7PGs5aJduUBfBA/exec'
+  'https://script.google.com/macros/s/AKfycbzWjrBEz-tU7xfNiwB9FP8-nC-2jjI6hVzIBmAQ4hMMP7bURAveYKs4N9WAsWfd_8FM/exec'
 
 /* ── State ── */
 
