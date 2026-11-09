@@ -57,6 +57,11 @@ export function StepEntrega({
   const [phone, setPhone] = useState('')
   const [address, setAddress] = useState('')
   const [city, setCity] = useState('')
+  const [notes, setNotes] = useState('')
+  const [wantsBilling, setWantsBilling] = useState(false)
+  const [billingNit, setBillingNit] = useState('')
+  const [billingName, setBillingName] = useState('')
+  const [billingEmail, setBillingEmail] = useState('')
   const [touched, setTouched] = useState<Record<string, boolean>>({})
   const [loading, setLoading] = useState(false)
 
@@ -117,7 +122,8 @@ export function StepEntrega({
           phone,
           address,
           city,
-          deliveryNotes: '',
+          deliveryNotes: notes,
+          ...(wantsBilling ? { billingNit, billingName: billingName || name, billingEmail: billingEmail || email } : {}),
           subscriptionType: line === 'especial' ? 'Ediciones Especiales' : 'Café de Diario',
           plan: plan.name,
           coffee: lineInfo.coffee,
@@ -264,9 +270,73 @@ export function StepEntrega({
           </span>
         </div>
 
+        <div>
+          <label className="lbl" htmlFor="x-notes">OBSERVACIONES</label>
+          <textarea
+            id="x-notes" className="inp" rows={3}
+            placeholder="Ej. Portería cerrada después de las 6pm, timbre no funciona, dejar con el vigilante..."
+            value={notes}
+            onChange={e => { setNotes(e.target.value); startTyping() }}
+            onBlur={() => onTypingChange(false)}
+            style={{ resize: 'vertical', padding: '12px 16px' }}
+          />
+        </div>
+
         <span style={{ fontSize: 12, color: 'var(--text)' }}>
           Domicilio incluido en Medellín y el Área Metropolitana. Consulta cobertura para otras ciudades.
         </span>
+      </fieldset>
+
+      {/* Billing */}
+      <fieldset className="fs">
+        <legend><b>C</b>FACTURACIÓN ELECTRÓNICA</legend>
+
+        <label style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, cursor: 'pointer' }}>
+          <input
+            type="checkbox"
+            checked={wantsBilling}
+            onChange={e => setWantsBilling(e.target.checked)}
+            style={{ width: 18, height: 18, accentColor: 'var(--accent)' }}
+          />
+          Necesito factura electrónica
+        </label>
+
+        {wantsBilling && (
+          <div className="pop" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: '0 10px' }}>
+              <div>
+                <label className="lbl" htmlFor="x-nit">NIT O CÉDULA <span style={{ color: 'var(--accent)' }}>*</span></label>
+                <input
+                  id="x-nit" className="inp" type="text" inputMode="numeric"
+                  placeholder="900.123.456-7 o 1.234.567.890"
+                  value={billingNit}
+                  onChange={e => { setBillingNit(e.target.value); startTyping() }}
+                  onBlur={() => onTypingChange(false)}
+                />
+              </div>
+              <div>
+                <label className="lbl" htmlFor="x-bname">RAZÓN SOCIAL O NOMBRE</label>
+                <input
+                  id="x-bname" className="inp" type="text"
+                  placeholder="Empresa S.A.S. o tu nombre"
+                  value={billingName}
+                  onChange={e => { setBillingName(e.target.value); startTyping() }}
+                  onBlur={() => onTypingChange(false)}
+                />
+              </div>
+            </div>
+            <div>
+              <label className="lbl" htmlFor="x-bemail">EMAIL PARA FACTURA</label>
+              <input
+                id="x-bemail" className="inp" type="email"
+                placeholder="contabilidad@empresa.com (si es diferente al de contacto)"
+                value={billingEmail}
+                onChange={e => { setBillingEmail(e.target.value); startTyping() }}
+                onBlur={() => onTypingChange(false)}
+              />
+            </div>
+          </div>
+        )}
       </fieldset>
 
       {/* Navigation */}

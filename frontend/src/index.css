@@ -29,6 +29,8 @@ button, input, textarea { font-family: var(--font); color: var(--ink); }
   background: transparent; padding: 12px 44px 12px 16px;
   font-size: 14px; transition: border-color .2s ease-out;
 }
+textarea.inp { min-height: 70px; line-height: 1.5; }
+.inp:focus { border-color: var(--accent); }
 .inp[aria-invalid="true"] { border-color: var(--error); }
 
 /* Selection pills (step 2 options) */
@@ -39,7 +41,11 @@ button, input, textarea { font-family: var(--font); color: var(--ink); }
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 4px; text-align: center;
   background: transparent;
-  transition: background-color .2s ease-out, color .2s ease-out;
+  transition: background-color .2s ease-out, color .2s ease-out, box-shadow .2s ease-out, transform .15s ease-out;
+}
+.pill2:hover:not([disabled]) {
+  box-shadow: 0 4px 12px rgba(10,10,10,.12);
+  transform: translateY(-2px);
 }
 
 /* Fieldsets */
@@ -62,11 +68,17 @@ button, input, textarea { font-family: var(--font); color: var(--ink); }
   font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
   text-decoration: none; cursor: pointer;
 }
+.btn:hover:not([disabled]) { box-shadow: 0 4px 14px rgba(236,110,37,.35); transform: translateY(-1px); }
 .btn[disabled] { opacity: .55; cursor: not-allowed; }
 
 /* Line selection cards */
 .lab-card {
   cursor: pointer; text-align: left;
+  transition: box-shadow .2s ease-out, transform .15s ease-out;
+}
+.lab-card:hover {
+  box-shadow: 0 6px 20px rgba(10,10,10,.15);
+  transform: translateY(-3px);
 }
 
 /* Title */
@@ -85,7 +97,7 @@ button, input, textarea { font-family: var(--font); color: var(--ink); }
 .ic { display: inline-flex; align-items: center; transition: transform .2s ease-out; transform-origin: center; }
 .lab-card:hover .ic { transform: scale(1.25); }
 .btn:hover .ic { transform: translateX(4px) scale(1.2); }
-.pill2:hover .ic, .pill2:focus-visible .ic { transform: scale(1.2); }
+.pill2:hover .ic, .pill2:focus-visible .ic { transform: scale(1.25) rotate(8deg); }
 
 /* Pop animation */
 .pop { animation: pop .3s ease-out; }
@@ -115,4 +127,5 @@ aside :focus-visible { outline-color: #FFFFFF; }
   * { transition: none !important; animation: none !important; }
   .ic { transition: none; }
   .lab-card:hover .ic, .btn:hover .ic, .lnk:hover .ic, .pill2:hover .ic { transform: none; }
+  .pill2:hover, .lab-card:hover, .btn:hover { transform: none; box-shadow: none; }
 }

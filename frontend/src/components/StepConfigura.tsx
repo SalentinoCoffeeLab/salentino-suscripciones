@@ -13,6 +13,28 @@ import {
 } from '../data/plans'
 import { GrindIcon } from './GrindIcon'
 
+function CupIcon({ count }: { count: number }) {
+  const props = { width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
+  if (count <= 1) {
+    return (
+      <svg {...props}>
+        <path d="M5.5 9h10v5.5a4.5 4.5 0 0 1-4.5 4.5h-1a4.5 4.5 0 0 1-4.5-4.5z" />
+        <path d="M15.5 10.5h1.5a2 2 0 0 1 0 4h-1.5" />
+        <path d="M4 21h13" />
+      </svg>
+    )
+  }
+  return (
+    <svg {...props} viewBox="0 0 32 24">
+      <path d="M3.5 9h10v5.5a4.5 4.5 0 0 1-4.5 4.5h-1a4.5 4.5 0 0 1-4.5-4.5z" />
+      <path d="M13.5 10.5h1.2a1.8 1.8 0 0 1 0 3.6h-1.2" />
+      <path d="M16.5 9h10v5.5a4.5 4.5 0 0 1-4.5 4.5h-1a4.5 4.5 0 0 1-4.5-4.5z" />
+      <path d="M26.5 10.5h1.2a1.8 1.8 0 0 1 0 3.6h-1.2" />
+      <path d="M2 21h28" />
+    </svg>
+  )
+}
+
 interface StepConfiguraProps {
   line: 'diario' | 'especial'
   selectedPlanId: string | null
@@ -128,6 +150,9 @@ export function StepConfigura({
                 aria-checked={isActive}
                 style={pillStyle(isActive)}
               >
+                <span className="ic" aria-hidden="true">
+                  <CupIcon count={c.id === '2' || c.id === '3' ? 2 : 1} />
+                </span>
                 <span>{c.label}</span>
                 <span style={{ fontSize: 10, fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>
                   {r.plan.name}, {r.frequency.label.toLowerCase()}
