@@ -48,8 +48,9 @@ function reducer(state: FlowState, action: FlowAction): FlowState {
       return {
         ...state,
         line: action.line,
-        // Only auto-advance when picking a new line (not re-clicking the same one)
-        ...(changing ? { step: 2 as const, planId: null, freqId: null, freqDays: null, grind: null } : {}),
+        step: 2 as const,
+        // Reset config only when switching lines
+        ...(changing ? { planId: null, freqId: null, freqDays: null, grind: null } : {}),
       }
     }
     case 'UPDATE_PLAN':
@@ -63,7 +64,11 @@ function reducer(state: FlowState, action: FlowAction): FlowState {
 
 /* ── Stepper ── */
 
-const STEP_LABELS = ['01 CAFÉ', '02 CONFIGURA', '03 ENTREGA']
+const STEPS = [
+  { n: 1 as const, label: 'Café' },
+  { n: 2 as const, label: 'Configura' },
+  { n: 3 as const, label: 'Entrega' },
+]
 
 function Stepper({ current, canReach, onGo }: {
   current: number
@@ -71,41 +76,40 @@ function Stepper({ current, canReach, onGo }: {
   onGo: (step: 1 | 2 | 3) => void
 }) {
   return (
-    <ol
-      aria-label="Pasos"
-      style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 12 }}
-    >
-      {STEP_LABELS.map((label, i) => {
-        const n = (i + 1) as 1 | 2 | 3
+    <nav aria-label="Pasos" style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
+      {STEPS.map(({ n, label }, i) => {
         const isCurrent = n === current
-        const reachable = canReach[i]
-        // A step is "done" only if it's before the current step and its data is complete
         const done = n < current && canReach[i]
+        const reachable = canReach[i] && n !== current
+
         return (
-          <li key={n} aria-current={isCurrent ? 'step' : undefined} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <span
-              aria-hidden="true"
-              style={{ display: 'block', height: 4, borderRadius: 4, background: isCurrent ? '#EC6E25' : done ? '#0A0A0A' : '#D9D2C8' }}
-            />
+          <span key={n} style={{ display: 'flex', alignItems: 'center' }}>
+            {i > 0 && (
+              <span aria-hidden="true" style={{
+                display: 'inline-block', width: 20, textAlign: 'center',
+                fontSize: 12, color: 'var(--line)', userSelect: 'none',
+              }}>/</span>
+            )}
             <button
               type="button"
-              onClick={() => { if (reachable && n !== current) onGo(n) }}
-              disabled={!reachable}
-              className={reachable && n !== current ? 'step-link' : undefined}
+              onClick={() => { if (reachable) onGo(n) }}
+              disabled={!reachable && !isCurrent}
               style={{
-                textAlign: 'left', border: 0, background: 'transparent', padding: 0,
-                minHeight: 28, fontFamily: 'inherit', fontSize: 13, fontWeight: 700,
-                letterSpacing: '0.06em',
-                cursor: reachable && n !== current ? 'pointer' : 'default',
-                color: isCurrent || done ? '#0A0A0A' : '#8C8279',
+                border: 0, background: 'transparent', padding: '6px 10px',
+                fontFamily: 'inherit', fontSize: 13, fontWeight: 700,
+                letterSpacing: '0.04em', cursor: reachable ? 'pointer' : 'default',
+                color: isCurrent ? 'var(--accent)' : done ? 'var(--ink)' : '#B5ADA5',
+                textDecoration: reachable ? 'underline' : 'none',
+                textUnderlineOffset: '3px',
               }}
             >
-              {label}{done ? ' ✓ editar' : ''}
+              {done && <span aria-hidden="true" style={{ marginRight: 4 }}>✓</span>}
+              {label}
             </button>
-          </li>
+          </span>
         )
       })}
-    </ol>
+    </nav>
   )
 }
 
@@ -310,10 +314,10 @@ function App() {
         maxWidth: 1240, margin: '0 auto', padding: '24px 24px 140px',
         boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 26,
       }}>
-        {/* Stepper — sticky so user can always navigate */}
+        {/* Stepper — sticky nav */}
         <div style={{
           position: 'sticky', top: 0, zIndex: 10,
-          background: 'var(--bg)', margin: '0 -24px', padding: '16px 24px 12px',
+          background: 'var(--bg)', margin: '0 -24px', padding: '12px 24px',
           borderBottom: '1px solid var(--line)',
         }}>
           <Stepper current={state.step} canReach={canReach} onGo={goStep} />
@@ -322,12 +326,10 @@ function App() {
         {/* Main content */}
         <div className="cols">
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24, minWidth: 0 }}>
-            {/* Always mount all steps, hide inactive with display:none to preserve state */}
             <div key={`s1-${state.step}`} className={state.step === 1 ? 'step-enter' : undefined} style={{ display: state.step === 1 ? 'contents' : 'none' }}>
               <StepCafe
                 selectedLine={state.line}
                 onSelectLine={handleSelectLine}
-                onContinue={() => goStep(2)}
               />
             </div>
 
@@ -341,7 +343,6 @@ function App() {
                   selectedGrind={state.grind}
                   onUpdate={handleUpdatePlan}
                   onGrindChange={handleGrindChange}
-                  onBack={() => goStep(1)}
                   onContinue={() => goStep(3)}
                 />
               </div>

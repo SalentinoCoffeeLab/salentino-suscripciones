@@ -17,9 +17,12 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f
 
 a { color: var(--ink); }
 a:hover { color: var(--accent); }
-button, input, textarea { font-family: var(--font); color: var(--ink); }
+button, input, textarea, select { font-family: var(--font); color: var(--ink); }
 
-/* Labels */
+/* Section labels */
+.sec-label { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+
+/* Form labels */
 .lbl { display: block; font-size: 11px; font-weight: 700; letter-spacing: .08em; margin-bottom: 8px; }
 
 /* Inputs */
@@ -33,93 +36,73 @@ textarea.inp { min-height: 70px; line-height: 1.5; }
 .inp:focus { border-color: var(--accent); }
 .inp[aria-invalid="true"] { border-color: var(--error); }
 
-/* Selection pills (step 2 options) */
-.pill2 {
-  min-height: 52px; padding: 8px 14px; border-radius: 12px;
-  border: 1px solid var(--ink); cursor: pointer;
-  font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+/* Option buttons (step 2 — quantity, frequency, grind) */
+.opt {
+  min-height: 52px; padding: 10px 14px; border-radius: 12px;
+  cursor: pointer; font-size: 13px; font-weight: 700;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 4px; text-align: center;
-  background: transparent;
-  transition: background-color .2s ease-out, color .2s ease-out, box-shadow .2s ease-out, transform .15s ease-out;
+  gap: 3px; text-align: center;
+  transition: background-color .15s, color .15s, border-color .15s, transform .15s;
 }
-.pill2:hover:not([disabled]) {
-  box-shadow: 0 4px 12px rgba(10,10,10,.12);
+.opt:hover:not([disabled]) { transform: translateY(-1px); }
+
+/* Line selection cards (step 1) */
+.line-card {
+  transition: box-shadow .2s ease-out, transform .2s ease-out, border-color .2s;
+}
+.line-card:hover {
+  box-shadow: 0 8px 24px rgba(10,10,10,.12);
   transform: translateY(-2px);
 }
+.line-card[aria-checked="true"] {
+  box-shadow: 0 6px 20px rgba(236,110,37,.25);
+}
 
-/* Fieldsets */
+/* Fieldsets (step 3) */
 .fs {
-  margin: 0; border: 1px solid var(--ink); border-radius: 18px;
-  background: transparent; padding: 26px 22px 22px;
+  margin: 0; border: 1px solid var(--line); border-radius: 16px;
+  background: var(--card); padding: 24px 20px 20px;
   display: flex; flex-direction: column; gap: 14px; min-width: 0;
 }
 .fs legend {
-  padding: 6px 12px; font-size: 12px; font-weight: 700; letter-spacing: .08em;
-  background: var(--ink); color: var(--bg); border-radius: 8px; margin-left: -6px;
+  padding: 5px 10px; font-size: 11px; font-weight: 700; letter-spacing: .08em;
+  background: var(--ink); color: var(--bg); border-radius: 6px; margin-left: -4px;
 }
 .fs legend b { color: var(--accent); margin-right: 6px; }
 
 /* Big CTA button */
 .btn {
   display: inline-flex; align-items: center; justify-content: center;
-  min-height: 54px; border: 0; border-radius: 12px;
+  min-height: 52px; border: 0; border-radius: 12px;
   background: var(--accent); color: var(--ink);
-  font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+  font-size: 15px; font-weight: 700; letter-spacing: .04em;
   text-decoration: none; cursor: pointer;
+  transition: box-shadow .15s, transform .15s;
 }
 .btn:hover:not([disabled]) { box-shadow: 0 4px 14px rgba(236,110,37,.35); transform: translateY(-1px); }
-.btn[disabled] { opacity: .55; cursor: not-allowed; }
-
-/* Line selection cards — 3D tilt */
-.lab-card {
-  cursor: pointer; text-align: left;
-  transition: box-shadow .3s ease-out, transform .3s ease-out;
-  transform: perspective(800px) rotateY(0deg);
-  transform-style: preserve-3d;
-}
-.lab-card:hover {
-  box-shadow: 0 12px 32px rgba(10,10,10,.18), 0 4px 8px rgba(10,10,10,.08);
-  transform: perspective(800px) rotateY(-2deg) rotateX(1deg) translateY(-4px);
-}
-.lab-card[aria-checked="true"] {
-  box-shadow: 0 10px 28px rgba(236,110,37,.3), 0 4px 10px rgba(236,110,37,.15);
-}
-.lab-card[aria-checked="true"]:hover {
-  box-shadow: 0 16px 36px rgba(236,110,37,.35), 0 6px 12px rgba(236,110,37,.2);
-}
-
-/* Stepper clickable steps */
-.step-link:hover { text-decoration: underline; color: var(--accent) !important; }
-
-/* Title */
-.ttl {
-  margin: 0; font-size: 64px; line-height: .95; font-weight: 700;
-  text-transform: uppercase; overflow-wrap: break-word; min-width: 0;
-}
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
 
 /* Two-column layout */
-.cols { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 36px; align-items: start; }
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 36px; align-items: start; }
 
 /* Link buttons */
-.lnk:hover .ic { transform: translateX(3px) scale(1.2); }
+.lnk:hover .ic { transform: translateX(3px); }
 
-/* Icon animation — hover only expands icons, no background/shadow on parent */
-.ic { display: inline-flex; align-items: center; transition: transform .2s ease-out; transform-origin: center; }
-.lab-card:hover .ic { transform: scale(1.25); }
-.btn:hover .ic { transform: translateX(4px) scale(1.2); }
-.pill2:hover .ic, .pill2:focus-visible .ic { transform: scale(1.25) rotate(8deg); }
+/* Icon animation */
+.ic { display: inline-flex; align-items: center; transition: transform .15s ease-out; transform-origin: center; }
+.btn:hover .ic { transform: translateX(4px); }
+.opt:hover .ic { transform: scale(1.15); }
 
-/* Pop animation */
-.pop { animation: pop .3s ease-out; }
-@keyframes pop { 0% { opacity: .4; transform: scale(.97); } 100% { opacity: 1; transform: scale(1); } }
-
-/* Step transitions */
-.step-enter { animation: stepIn .35s ease-out; }
+/* Step enter animation */
+.step-enter { animation: stepIn .3s ease-out; }
 @keyframes stepIn {
-  0% { opacity: 0; transform: translateY(12px); }
+  0% { opacity: 0; transform: translateY(10px); }
   100% { opacity: 1; transform: translateY(0); }
 }
+
+/* Pop animation */
+.pop { animation: pop .25s ease-out; }
+@keyframes pop { 0% { opacity: .4; transform: scale(.97); } 100% { opacity: 1; transform: scale(1); } }
 
 /* Focus */
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
@@ -131,20 +114,15 @@ aside :focus-visible { outline-color: #FFFFFF; }
   .only-d { display: none !important; }
   .only-m { display: flex; }
   .inp { font-size: 16px; }
-  .ttl { font-size: 30px; }
   .cols { grid-template-columns: 1fr; }
   .fs { padding: 16px; }
 }
 @media (max-width: 900px) {
   .cols { grid-template-columns: 1fr; }
-  .ttl { font-size: 38px; }
 }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
-  .ic { transition: none; }
-  .lab-card:hover .ic, .btn:hover .ic, .lnk:hover .ic, .pill2:hover .ic { transform: none; }
-  .pill2:hover, .lab-card:hover, .btn:hover { transform: none !important; box-shadow: none !important; }
-  .lab-card[aria-checked="true"] { box-shadow: none !important; }
+  .line-card:hover, .opt:hover, .btn:hover { transform: none !important; box-shadow: none !important; }
 }

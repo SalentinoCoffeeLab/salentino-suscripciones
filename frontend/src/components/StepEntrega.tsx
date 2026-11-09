@@ -157,12 +157,10 @@ export function StepEntrega({
 
   return (
     <>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <h1 className="ttl">
-          <span style={{ color: '#EC6E25' }}>03</span> Entrega
-        </h1>
-        <p style={{ margin: 0, maxWidth: 620, fontSize: 18, lineHeight: 1.5, color: 'var(--text)' }}>
-          Dónde llega cada entrega. Usamos tu celular solo para avisarte cuando sale tu pedido.
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700 }}>Datos de entrega</h1>
+        <p style={{ margin: 0, maxWidth: 520, fontSize: 16, lineHeight: 1.5, color: 'var(--text)' }}>
+          Dónde llega tu café. Usamos tu celular solo para avisarte cuando sale el pedido.
         </p>
       </div>
 
