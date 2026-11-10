@@ -315,7 +315,7 @@ export function StepEntrega({
         </div>
 
         <span style={{ fontSize: 12, color: 'var(--text)' }}>
-          Domicilio incluido en Medellín y el Área Metropolitana. ¿Otra ciudad? Escríbenos por WhatsApp y te contamos el envío.
+          Domicilio incluido en Medellín y el Área Metropolitana. Otras ciudades: envío estándar (2–3 días hábiles).
         </span>
       </fieldset>
 
@@ -396,15 +396,15 @@ export function StepEntrega({
         </span>
         <ol style={{ margin: 0, padding: 0, listStyle: 'none', counterReset: 'n', display: 'grid', gap: 10 }}>
           {[
-            { bold: 'Agregas tu tarjeta en Mercado Pago.', rest: ' Ahí mismo autorizas el cobro mensual.' },
-            { bold: 'Despachamos en 1–2 días hábiles.', rest: ' En Medellín y el Área Metropolitana llega en 24–48 h.' },
-            ...(freqDays === 15 ? [{ bold: 'La segunda entrega sale 15 días después.', rest: ' Te avisamos por WhatsApp cada vez.' }] : []),
+            { node: <><b>Agregas tu tarjeta en</b> <MercadoPagoLogo height={22} /><b>.</b> Ahí mismo autorizas el cobro mensual.</> },
+            { node: <><b>Despachamos en 1–2 días hábiles.</b> Medellín: 24–48 h. Otras ciudades: 2–3 días hábiles.</> },
+            ...(freqDays === 15 ? [{ node: <><b>La segunda entrega sale 15 días después.</b> Te avisamos por WhatsApp cada vez.</> }] : []),
           ].map((item, i) => (
             <li key={i} style={{ position: 'relative', paddingLeft: 32, fontSize: 13.5, lineHeight: 1.5 }}>
               <span style={{ position: 'absolute', left: 0, top: 0, color: 'var(--accent)', fontWeight: 700 }}>
                 {String(i + 1).padStart(2, '0')}
               </span>
-              <b>{item.bold}</b>{item.rest}
+              {item.node}
             </li>
           ))}
         </ol>
