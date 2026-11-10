@@ -16,9 +16,9 @@ const DESCRIPTIONS: Record<string, string> = {
 }
 
 const FAQ: { q: string; a: ReactNode }[] = [
-  { q: '¿Cómo pauso o cancelo?', a: <>Escríbenos por WhatsApp y la pausamos o cancelamos. También puedes cancelarla desde tu cuenta de <MercadoPagoLogo height={13} />. Sin penalidad.</> },
+  { q: '¿Cómo pauso o cancelo?', a: <>Escríbenos por WhatsApp y la pausamos o cancelamos. También puedes cancelarla desde tu cuenta de <MercadoPagoLogo height={26} />. Sin penalidad.</> },
   { q: '¿Puedo cambiar la molienda o la cantidad?', a: 'Sí. Escríbenos antes de tu próxima entrega y la ajustamos.' },
-  { q: '¿Cómo se cobra el plan cada 15 días?', a: <><MercadoPagoLogo height={13} /> cobra una vez al mes el valor de tus 2 entregas.</> },
+  { q: '¿Cómo se cobra el plan cada 15 días?', a: <><MercadoPagoLogo height={26} /> cobra una vez al mes el valor de tus 2 entregas.</> },
   { q: '¿Cuándo llega la primera entrega?', a: 'Despachamos en 1–2 días hábiles. En Medellín y el Área Metropolitana llega en 24–48 h.' },
   { q: '¿Llegan a otras ciudades?', a: 'Por ahora el domicilio incluido es para Medellín y el Área Metropolitana. Si estás en otra ciudad, escríbenos.' },
 ]

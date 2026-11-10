@@ -243,7 +243,7 @@ function Sidebar({ state }: { state: FlowState }) {
         {/* Fine print */}
         {monthly > 0 && (
           <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, lineHeight: 1.5, color: 'var(--text)', marginTop: 2 }}>
-            Débito mensual vía <MercadoPagoLogo height={14} />
+            Débito mensual vía <MercadoPagoLogo height={28} />
           </span>
         )}
       </div>
