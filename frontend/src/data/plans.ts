@@ -272,7 +272,7 @@ export const LINE_INFO: Record<string, LineInfo> = {
     name: 'Café de diario',
     code: 'SUM',
     kicker: 'PERFIL FIJO',
-    from: 'Desde $70.000/entrega',
+    from: 'Desde $72.000/entrega',
     meta: [
       'ORIGEN: Salento, Quindío',
       'NOTAS: Chocolate amargo, caramelo, panela',

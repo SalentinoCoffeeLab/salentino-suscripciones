@@ -18,7 +18,7 @@ const DESCRIPTIONS: Record<string, string> = {
 const FAQ: { q: string; a: ReactNode }[] = [
   { q: '¿Cómo pauso o cancelo?', a: <>Escríbenos por WhatsApp y la pausamos o cancelamos. También puedes cancelarla desde tu cuenta de <MercadoPagoLogo height={26} />. Sin penalidad.</> },
   { q: '¿Puedo cambiar la molienda o la cantidad?', a: 'Sí. Escríbenos antes de tu próxima entrega y la ajustamos.' },
-  { q: '¿Cómo se cobra el plan cada 15 días?', a: <><MercadoPagoLogo height={26} /> cobra una vez al mes el valor de tus 2 entregas.</> },
+  { q: '¿Cómo se cobra?', a: <>Si tu plan es quincenal, <MercadoPagoLogo height={26} /> cobra una vez al mes el valor de tus 2 entregas. Si es mensual, cobra una entrega al mes.</> },
   { q: '¿Cuándo llega la primera entrega?', a: 'Medellín y Área Metropolitana: 1–2 días hábiles (a veces el mismo día). Otras ciudades: 2–3 días hábiles, según la transportadora.' },
 ]
 
@@ -30,7 +30,7 @@ export function StepCafe({ selectedLine, onSelectLine }: StepCafeProps) {
           Elige tu <span style={{ color: 'var(--accent)' }}>café</span>
         </h1>
         <p className="p-step" style={{ margin: 0, maxWidth: 520, fontSize: 14, lineHeight: 1.5, color: 'var(--text)' }}>
-          Dos líneas. Las dos llegan recién tostadas y con domicilio incluido.
+          Dos líneas. Las dos llegan recién tostadas, con domicilio incluido en Medellín y el Área Metropolitana.
         </p>
       </div>
 
