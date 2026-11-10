@@ -111,7 +111,7 @@ textarea.inp { min-height: 70px; line-height: 1.5; }
 .btn[disabled] { opacity: .4; cursor: not-allowed; }
 
 /* ── Two-column layout ── */
-.cols { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 48px; align-items: start; }
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 40px; align-items: start; }
 
 /* ── Link buttons ── */
 .lnk:hover .ic { transform: translateX(3px); }

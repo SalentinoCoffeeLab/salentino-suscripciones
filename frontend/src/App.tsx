@@ -156,51 +156,51 @@ function Sidebar({ state }: { state: FlowState }) {
         position: 'sticky', top: 20,
         display: 'flex', flexDirection: 'column', gap: 0,
         background: 'var(--bg)', color: 'var(--ink)',
-        borderRadius: 20, overflow: 'hidden',
+        borderRadius: 16, overflow: 'hidden',
       }}
     >
       {/* Orange header band */}
       <span style={{
-        display: 'flex', justifyContent: 'space-between', padding: '11px 22px',
-        background: 'var(--accent)', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
+        display: 'flex', justifyContent: 'space-between', padding: '9px 18px',
+        background: 'var(--accent)', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase',
       }}>
         <span>Tu suscripción</span>
         <span>Medellín</span>
       </span>
 
-      <div style={{ padding: '20px 22px 22px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ padding: '16px 18px 18px', display: 'flex', flexDirection: 'column', gap: 10 }}>
         {/* Plan name */}
         <div>
-          <span style={{ fontSize: 17, fontWeight: 700, letterSpacing: '-0.01em', lineHeight: 1.1 }}>
+          <span style={{ fontSize: 15, fontWeight: 700, letterSpacing: '-0.01em', lineHeight: 1.1 }}>
             {lineInfo ? lineInfo.name : 'Tu café'}
           </span>
           {lineInfo && (
-            <span style={{ display: 'block', fontSize: 12, marginTop: 3, color: 'var(--text)' }}>
+            <span style={{ display: 'block', fontSize: 11, marginTop: 2, color: 'var(--text)' }}>
               {state.line === 'diario' ? 'Caturra Lavado Tradicional' : 'Selección del tostador'}
             </span>
           )}
         </div>
 
         {/* Config rows */}
-        <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '7px 14px', margin: 0, fontSize: 13 }}>
+        <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '5px 12px', margin: 0, fontSize: 12 }}>
           {plan && <><dt style={{ color: 'var(--text)' }}>Cantidad</dt><dd style={{ margin: 0, textAlign: 'right', fontWeight: 700 }}>{plan.name} · ~{plan.cupsPerShipment} tazas</dd></>}
           {grindObj && <><dt style={{ color: 'var(--text)' }}>Molienda</dt><dd style={{ margin: 0, textAlign: 'right', fontWeight: 700 }}>{grindObj.label}</dd></>}
-          {freqLabel && <><dt style={{ color: 'var(--text)' }}>Frecuencia</dt><dd style={{ margin: 0, textAlign: 'right', fontWeight: 700 }}>{freqLabel}{state.freqDays === 15 ? ' · 2 entregas' : ''}</dd></>}
+          {freqLabel && <><dt style={{ color: 'var(--text)' }}>Frecuencia</dt><dd style={{ margin: 0, textAlign: 'right', fontWeight: 700 }}>{freqLabel}{state.freqDays === 15 ? ' · 2/mes' : ''}</dd></>}
         </dl>
 
         {/* Ticket perforation */}
         <span aria-hidden="true" style={{
           position: 'relative', display: 'block',
-          borderTop: '1.5px dashed rgba(10,10,10,.2)',
-          margin: '6px -22px',
+          borderTop: '1.5px dashed rgba(10,10,10,.15)',
+          margin: '4px -18px',
         }}>
-          <span style={{ position: 'absolute', left: -10, top: -10, width: 20, height: 20, borderRadius: '50%', background: 'var(--sand)' }} />
-          <span style={{ position: 'absolute', right: -10, top: -10, width: 20, height: 20, borderRadius: '50%', background: 'var(--sand)' }} />
+          <span style={{ position: 'absolute', left: -8, top: -8, width: 16, height: 16, borderRadius: '50%', background: 'var(--sand)' }} />
+          <span style={{ position: 'absolute', right: -8, top: -8, width: 16, height: 16, borderRadius: '50%', background: 'var(--sand)' }} />
         </span>
 
         {/* Price breakdown */}
-        <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '7px 14px', margin: 0, fontSize: 13 }}>
+        <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '5px 12px', margin: 0, fontSize: 12 }}>
           <dt style={{ color: 'var(--text)' }}>Por entrega</dt>
           <dd style={{ margin: 0, textAlign: 'right', fontWeight: 700 }}>{perShipment ? formatPrice(perShipment) : '—'}</dd>
           <dt style={{ color: 'var(--text)' }}>Domicilio</dt>
@@ -213,23 +213,23 @@ function Sidebar({ state }: { state: FlowState }) {
 
         {/* Savings */}
         {retailPrice > 0 && perShipment > 0 && (
-          <span style={{ fontSize: 13 }}>
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.08em', color: 'var(--accent)', marginRight: 4 }}>AHORRO</span>
-            {formatPrice(retailPrice - perShipment)} por entrega
+          <span style={{ fontSize: 12 }}>
+            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.08em', color: 'var(--accent)', marginRight: 3 }}>AHORRO</span>
+            {formatPrice(retailPrice - perShipment)}/entrega
           </span>
         )}
 
         {/* Total */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', fontWeight: 700, fontSize: 16 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', fontWeight: 700, fontSize: 14, marginTop: 2 }}>
           <span>Total al mes</span>
-          <span style={{ fontSize: 38, color: 'var(--accent)', letterSpacing: '-0.03em' }}>
+          <span style={{ fontSize: 28, color: 'var(--accent)', letterSpacing: '-0.03em' }}>
             {monthly ? formatPrice(monthly) : '—'}
           </span>
         </div>
 
         {/* Fine print */}
         {monthly > 0 && (
-          <span style={{ fontSize: 12, lineHeight: 1.5, color: 'var(--text)' }}>
+          <span style={{ fontSize: 11, lineHeight: 1.5, color: 'var(--text)' }}>
             Se debita una vez al mes con Mercado Pago.
           </span>
         )}
