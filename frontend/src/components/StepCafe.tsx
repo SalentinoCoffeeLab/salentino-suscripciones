@@ -25,10 +25,10 @@ export function StepCafe({ selectedLine, onSelectLine }: StepCafeProps) {
   return (
     <>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <h1 className="h1-step" style={{ margin: 0, fontSize: 26, fontWeight: 700, letterSpacing: '-0.02em' }}>
+        <h1 className="h1-step" style={{ margin: 0, fontSize: 28, fontWeight: 700 }}>
           Elige tu <span style={{ color: 'var(--accent)' }}>café</span>
         </h1>
-        <p className="p-step" style={{ margin: 0, maxWidth: 480, fontSize: 14, lineHeight: 1.6, color: 'var(--text)' }}>
+        <p className="p-step" style={{ margin: 0, maxWidth: 520, fontSize: 14, lineHeight: 1.5, color: 'var(--text)' }}>
           Dos líneas. Las dos llegan recién tostadas y con domicilio incluido.
         </p>
       </div>
@@ -58,39 +58,39 @@ export function StepCafe({ selectedLine, onSelectLine }: StepCafeProps) {
               aria-checked={isActive}
               style={{
                 display: 'flex', flexDirection: 'column',
-                padding: 0, borderRadius: 16, overflow: 'hidden',
-                border: isActive ? '2px solid var(--ink)' : '1px solid var(--line)',
+                padding: 0, borderRadius: 24, overflow: 'hidden',
+                border: isActive ? '2.5px solid var(--ink)' : '1.5px solid var(--line)',
                 background: 'var(--card)',
                 color: 'var(--ink)', textAlign: 'left', cursor: 'pointer',
-                transition: 'border-color .15s, box-shadow .25s ease-out, transform .25s ease-out',
+                transition: 'border-color .2s, box-shadow .3s ease-out, transform .3s ease-out',
               }}
             >
               {/* ── Header band ── */}
               <span className="line-card-header" style={{
                 display: 'flex', flexDirection: 'column', gap: 6,
-                padding: '22px 24px 18px',
+                padding: '24px 28px 20px',
                 background: isActive
-                  ? 'var(--ink)'
+                  ? 'linear-gradient(135deg, #EC6E25 0%, #D45A18 100%)'
                   : key === 'especial'
-                    ? 'var(--ink)'
-                    : 'var(--bg)',
-                color: isActive || key === 'especial' ? 'var(--bg)' : 'var(--ink)',
+                    ? 'linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 100%)'
+                    : 'linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%)',
+                color: isActive || key === 'especial' ? '#F9F4ED' : 'var(--ink)',
               }}>
                 <span style={{
-                  fontSize: 9, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase',
-                  color: isActive ? 'var(--accent)' : key === 'especial' ? 'rgba(249,244,237,.5)' : 'var(--text)',
+                  fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase',
+                  opacity: isActive ? 0.9 : 0.6,
                 }}>
                   {info.kicker}
                 </span>
-                <span style={{ fontSize: 22, fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+                <span style={{ fontSize: 26, fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.02em' }}>
                   {info.name}
                 </span>
               </span>
 
               {/* ── Body ── */}
               <span className="line-card-body" style={{
-                display: 'flex', flexDirection: 'column', gap: 14,
-                padding: '18px 24px 22px',
+                display: 'flex', flexDirection: 'column', gap: 16,
+                padding: '20px 28px 24px',
                 flex: 1,
               }}>
                 {/* Description */}
@@ -100,20 +100,20 @@ export function StepCafe({ selectedLine, onSelectLine }: StepCafeProps) {
 
                 {/* Meta data — origin, notes, sizes */}
                 <dl style={{
-                  display: 'grid', gridTemplateColumns: '68px 1fr',
-                  gap: '5px 10px', margin: 0,
+                  display: 'grid', gridTemplateColumns: '72px 1fr',
+                  gap: '6px 12px', margin: 0,
                 }}>
                   {info.meta.map((m) => {
                     const [label, value] = m.split(': ')
                     return (
                       <span key={m} style={{ display: 'contents' }}>
                         <dt style={{
-                          fontSize: 9, fontWeight: 700, letterSpacing: '0.1em',
-                          textTransform: 'uppercase', color: 'var(--text)', paddingTop: 2,
+                          fontSize: 10, fontWeight: 700, letterSpacing: '0.08em',
+                          textTransform: 'uppercase', color: 'var(--accent)', paddingTop: 2,
                         }}>
                           {label}
                         </dt>
-                        <dd style={{ margin: 0, fontSize: 12, lineHeight: 1.5, color: 'var(--ink)' }}>
+                        <dd style={{ margin: 0, fontSize: 13, lineHeight: 1.5, color: 'var(--ink)' }}>
                           {value}
                         </dd>
                       </span>
@@ -124,22 +124,22 @@ export function StepCafe({ selectedLine, onSelectLine }: StepCafeProps) {
                 {/* ── Price + CTA row ── */}
                 <span style={{
                   display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 12,
-                  marginTop: 'auto', paddingTop: 16,
+                  marginTop: 'auto', paddingTop: 18,
                   borderTop: '1px solid var(--line)',
                 }}>
                   <span style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <span style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-                      <span style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1 }}>
+                    <span style={{ display: 'flex', alignItems: 'baseline', gap: 5 }}>
+                      <span style={{ fontSize: 28, fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1 }}>
                         {formatPrice(cheapest?.priceFrom ?? 0)}
                       </span>
-                      <span style={{ fontSize: 12, color: 'var(--text)', fontWeight: 400 }}>/mes</span>
+                      <span style={{ fontSize: 13, color: 'var(--text)', fontWeight: 400 }}>/mes</span>
                     </span>
                     {saving > 0 ? (
-                      <span style={{ fontSize: 11, lineHeight: 1.4, color: 'var(--text)' }}>
-                        Ahorras <span style={{ fontWeight: 700, color: 'var(--ok)' }}>{formatPrice(saving)}</span>/entrega
+                      <span style={{ fontSize: 12, lineHeight: 1.4, color: 'var(--text)' }}>
+                        Ahorras <span style={{ fontWeight: 700, color: 'var(--ok)' }}>{formatPrice(saving)}</span> por entrega
                       </span>
                     ) : key === 'especial' ? (
-                      <span style={{ fontSize: 11, lineHeight: 1.4, color: 'var(--text)' }}>
+                      <span style={{ fontSize: 12, lineHeight: 1.4, color: 'var(--text)' }}>
                         Nota de cata en cada entrega
                       </span>
                     ) : null}
@@ -147,13 +147,12 @@ export function StepCafe({ selectedLine, onSelectLine }: StepCafeProps) {
 
                   <span style={{
                     display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap',
-                    letterSpacing: '.04em', textTransform: 'uppercase' as const,
-                    padding: '10px 22px', borderRadius: 8,
-                    minHeight: 40,
-                    background: isActive ? 'var(--ink)' : 'var(--ink)',
-                    color: isActive ? 'var(--accent)' : 'var(--bg)',
-                    transition: 'background .15s, color .15s',
+                    fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap',
+                    padding: '12px 26px', borderRadius: 40,
+                    minHeight: 48,
+                    background: isActive ? 'var(--ink)' : 'var(--accent)',
+                    color: isActive ? '#F9F4ED' : 'var(--ink)',
+                    transition: 'background .2s, color .2s',
                   }}>
                     {isActive ? 'Elegido' : 'Elegir'}
                   </span>
@@ -170,12 +169,12 @@ export function StepCafe({ selectedLine, onSelectLine }: StepCafeProps) {
       </p>
 
       {/* FAQ */}
-      <div style={{ marginTop: 24 }}>
-        <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--text)' }}>
+      <div style={{ marginTop: 20 }}>
+        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--accent)' }}>
           Antes de suscribirte
         </span>
-        <h2 style={{ margin: '8px 0 16px', fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em' }}>
-          Preguntas directas
+        <h2 style={{ margin: '6px 0 14px', fontSize: 28, fontWeight: 700 }}>
+          Preguntas <span style={{ color: 'var(--accent)' }}>directas</span>
         </h2>
         <div className="faq-section">
           {FAQ.map((item) => (

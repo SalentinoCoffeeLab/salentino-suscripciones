@@ -179,7 +179,7 @@ export function StepEntrega({
   return (
     <>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <h1 className="h1-step" style={{ margin: 0, fontSize: 26, fontWeight: 700, letterSpacing: '-0.02em' }}>
+        <h1 className="h1-step" style={{ margin: 0, fontSize: 28, fontWeight: 700 }}>
           Datos de <span style={{ color: 'var(--accent)' }}>entrega</span>
         </h1>
         <p className="p-step" style={{ margin: 0, maxWidth: 520, fontSize: 16, lineHeight: 1.5, color: 'var(--text)' }}>
@@ -389,8 +389,8 @@ export function StepEntrega({
       </fieldset>
 
       {/* What happens next */}
-      <div style={{ background: 'var(--card)', borderRadius: 14, padding: '20px 22px', display: 'flex', flexDirection: 'column', gap: 12, border: '1px solid var(--line)' }}>
-        <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--text)' }}>
+      <div style={{ background: 'var(--card)', borderRadius: 20, padding: '22px 24px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--accent)' }}>
           Qué pasa después
         </span>
         <ol style={{ margin: 0, padding: 0, listStyle: 'none', counterReset: 'n', display: 'grid', gap: 10 }}>

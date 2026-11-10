@@ -1,4 +1,5 @@
-import { useReducer, useCallback, useState } from 'react'
+import { useReducer, useCallback, useState, useRef, useLayoutEffect } from 'react'
+import gsap from 'gsap'
 import {
   getPlanById,
   getMonthlyPrice,
@@ -76,7 +77,7 @@ function Stepper({ current, canReach, onGo }: {
   onGo: (step: 1 | 2 | 3) => void
 }) {
   return (
-    <nav aria-label="Pasos" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+    <nav aria-label="Pasos" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
       {STEPS.map(({ n, label }, i) => {
         const isCurrent = n === current
         const done = n < current && canReach[i]
@@ -86,9 +87,9 @@ function Stepper({ current, canReach, onGo }: {
           <span key={n} style={{ display: 'flex', alignItems: 'center' }}>
             {i > 0 && (
               <span aria-hidden="true" style={{
-                display: 'inline-block', width: 20, height: 1,
-                background: done ? 'var(--ink)' : 'rgba(10,10,10,.12)', margin: '0 2px',
-                transition: 'background .2s',
+                display: 'inline-block', width: 22, height: 1.5,
+                background: done ? 'var(--ink)' : 'rgba(10,10,10,.15)', margin: '0 2px',
+                transition: 'background .3s',
               }} />
             )}
             <button
@@ -99,15 +100,20 @@ function Stepper({ current, canReach, onGo }: {
               style={{
                 border: isCurrent ? undefined : 0,
                 background: isCurrent ? undefined : 'transparent',
-                padding: isCurrent ? '8px 16px' : '8px 12px', borderRadius: 40,
-                fontFamily: 'inherit', fontSize: 11, fontWeight: 700,
-                letterSpacing: '0.08em', textTransform: 'uppercase' as const,
+                padding: isCurrent ? '9px 18px' : '8px 14px', borderRadius: 40,
+                fontFamily: 'inherit', fontSize: 12.5, fontWeight: 700,
+                letterSpacing: '0.06em', textTransform: 'uppercase' as const,
                 cursor: reachable ? 'pointer' : 'default',
-                color: isCurrent ? 'var(--ink)' : done ? 'var(--ink)' : 'rgba(10,10,10,.3)',
-                transition: 'color .15s, padding .15s',
+                color: isCurrent ? 'var(--ink)' : done ? 'var(--ink)' : 'rgba(10,10,10,.35)',
+                transform: isCurrent ? 'scale(1.05)' : undefined,
+                transition: 'transform .25s ease-out, color .2s',
+                textDecoration: done && reachable ? 'underline' : 'none',
+                textDecorationColor: 'var(--accent)',
+                textDecorationThickness: '2px',
+                textUnderlineOffset: '4px',
               }}
             >
-              {label}
+              {`${String(n).padStart(2, '0')} `}{label}
             </button>
           </span>
         )
@@ -129,119 +135,102 @@ function Sidebar({ state }: { state: FlowState }) {
 
   const retailPrice = plan?.retailWithShipping ?? 0
 
+  const sidebarRef = useRef<HTMLElement>(null)
+
+  // Animate sidebar values when they change
+  useLayoutEffect(() => {
+    if (!sidebarRef.current) return
+    gsap.fromTo(sidebarRef.current,
+      { opacity: 0.6, y: 4 },
+      { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }
+    )
+  }, [plan?.id, state.freqDays, state.grind])
+
   return (
     <aside
-      className="only-d line-card"
+      ref={sidebarRef}
+      className="only-d"
       aria-label="Tu plan"
       aria-live="polite"
       style={{
-        position: 'sticky', top: 32,
-        display: 'flex', flexDirection: 'column',
-        padding: 0, borderRadius: 16, overflow: 'hidden',
-        border: '1px solid var(--line)',
-        background: 'var(--card)', color: 'var(--ink)',
+        position: 'sticky', top: 20,
+        display: 'flex', flexDirection: 'column', gap: 0,
+        background: 'var(--bg)', color: 'var(--ink)',
+        borderRadius: 20, overflow: 'hidden',
       }}
     >
-      {/* ── Header band (same as line-card-header) ── */}
-      <div className="line-card-header" style={{
-        display: 'flex', flexDirection: 'column', gap: 6,
-        padding: '22px 24px 18px',
-        background: 'var(--ink)', color: 'var(--bg)',
+      {/* Orange header band */}
+      <span style={{
+        display: 'flex', justifyContent: 'space-between', padding: '11px 22px',
+        background: 'var(--accent)', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
+        textTransform: 'uppercase',
       }}>
-        <span style={{
-          fontSize: 9, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase',
-          color: lineInfo ? 'var(--accent)' : 'rgba(249,244,237,.5)',
-        }}>
-          Tu suscripción
-        </span>
-        <span className="pop" style={{ fontSize: 22, fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.02em' }}>
-          {lineInfo ? lineInfo.name : 'Elige tu café'}
-        </span>
-        {lineInfo && (
-          <span style={{ fontSize: 12, marginTop: 2, color: 'rgba(249,244,237,.6)', lineHeight: 1.4 }}>
-            {state.line === 'diario' ? 'Caturra Lavado Tradicional' : 'Selección del tostador'}
-          </span>
-        )}
-      </div>
+        <span>Tu suscripción</span>
+        <span>Medellín</span>
+      </span>
 
-      {/* ── Body (same as line-card-body) ── */}
-      <div className="line-card-body" style={{
-        display: 'flex', flexDirection: 'column', gap: 14,
-        padding: '18px 24px 22px',
-      }}>
-        {/* Config rows */}
-        <dl style={{
-          display: 'grid', gridTemplateColumns: '68px 1fr',
-          gap: '5px 10px', margin: 0,
-        }}>
-          {plan && (
-            <span style={{ display: 'contents' }}>
-              <dt style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text)', paddingTop: 2 }}>Cantidad</dt>
-              <dd style={{ margin: 0, fontSize: 12, lineHeight: 1.5, color: 'var(--ink)' }}>{plan.name} · ~{plan.cupsPerShipment} tazas</dd>
-            </span>
-          )}
-          {grindObj && (
-            <span style={{ display: 'contents' }}>
-              <dt style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text)', paddingTop: 2 }}>Molienda</dt>
-              <dd style={{ margin: 0, fontSize: 12, lineHeight: 1.5, color: 'var(--ink)' }}>{grindObj.label}</dd>
-            </span>
-          )}
-          {freqLabel && (
-            <span style={{ display: 'contents' }}>
-              <dt style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text)', paddingTop: 2 }}>Frecuencia</dt>
-              <dd style={{ margin: 0, fontSize: 12, lineHeight: 1.5, color: 'var(--ink)' }}>{freqLabel}</dd>
-            </span>
-          )}
-          <span style={{ display: 'contents' }}>
-            <dt style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text)', paddingTop: 2 }}>Domicilio</dt>
-            <dd style={{ margin: 0, fontSize: 12, lineHeight: 1.5, color: 'var(--ok)', fontWeight: 700 }}>Incluido</dd>
+      <div style={{ padding: '20px 22px 22px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {/* Plan name */}
+        <div>
+          <span style={{ fontSize: 17, fontWeight: 700, letterSpacing: '-0.01em', lineHeight: 1.1 }}>
+            {lineInfo ? lineInfo.name : 'Tu café'}
           </span>
+          {lineInfo && (
+            <span style={{ display: 'block', fontSize: 12, marginTop: 3, color: 'var(--text)' }}>
+              {state.line === 'diario' ? 'Caturra Lavado Tradicional' : 'Selección del tostador'}
+            </span>
+          )}
+        </div>
+
+        {/* Config rows */}
+        <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '7px 14px', margin: 0, fontSize: 13 }}>
+          {plan && <><dt style={{ color: 'var(--text)' }}>Cantidad</dt><dd style={{ margin: 0, textAlign: 'right', fontWeight: 700 }}>{plan.name} · ~{plan.cupsPerShipment} tazas</dd></>}
+          {grindObj && <><dt style={{ color: 'var(--text)' }}>Molienda</dt><dd style={{ margin: 0, textAlign: 'right', fontWeight: 700 }}>{grindObj.label}</dd></>}
+          {freqLabel && <><dt style={{ color: 'var(--text)' }}>Frecuencia</dt><dd style={{ margin: 0, textAlign: 'right', fontWeight: 700 }}>{freqLabel}{state.freqDays === 15 ? ' · 2 entregas' : ''}</dd></>}
         </dl>
 
-        {/* ── Price + savings (same as card footer) ── */}
-        <span style={{
-          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 12,
-          marginTop: 'auto', paddingTop: 16,
-          borderTop: '1px solid var(--line)',
+        {/* Ticket perforation */}
+        <span aria-hidden="true" style={{
+          position: 'relative', display: 'block',
+          borderTop: '1.5px dashed rgba(10,10,10,.2)',
+          margin: '6px -22px',
         }}>
-          <span style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <span style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-              <span style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1 }}>
-                {monthly ? formatPrice(monthly) : '—'}
-              </span>
-              <span style={{ fontSize: 12, color: 'var(--text)', fontWeight: 400 }}>/mes</span>
-            </span>
-            {retailPrice > 0 && perShipment > 0 ? (
-              <span style={{ fontSize: 11, lineHeight: 1.4, color: 'var(--text)' }}>
-                Ahorras <span style={{ fontWeight: 700, color: 'var(--ok)' }}>{formatPrice(retailPrice - perShipment)}</span>/entrega
-              </span>
-            ) : (
-              <span style={{ fontSize: 11, lineHeight: 1.4, color: 'var(--text)' }}>
-                {perShipment ? `${formatPrice(perShipment)} por entrega` : 'Configura tu plan'}
-              </span>
-            )}
-          </span>
-
-          {retailPrice > 0 && perShipment > 0 && (
-            <span style={{
-              display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1,
-            }}>
-              <span style={{ fontSize: 10, color: 'var(--text)', textDecoration: 'line-through' }}>
-                {formatPrice(retailPrice)}
-              </span>
-              <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--ok)' }}>
-                {formatPrice(perShipment)}
-              </span>
-            </span>
-          )}
+          <span style={{ position: 'absolute', left: -10, top: -10, width: 20, height: 20, borderRadius: '50%', background: 'var(--sand)' }} />
+          <span style={{ position: 'absolute', right: -10, top: -10, width: 20, height: 20, borderRadius: '50%', background: 'var(--sand)' }} />
         </span>
+
+        {/* Price breakdown */}
+        <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '7px 14px', margin: 0, fontSize: 13 }}>
+          <dt style={{ color: 'var(--text)' }}>Por entrega</dt>
+          <dd style={{ margin: 0, textAlign: 'right', fontWeight: 700 }}>{perShipment ? formatPrice(perShipment) : '—'}</dd>
+          <dt style={{ color: 'var(--text)' }}>Domicilio</dt>
+          <dd style={{ margin: 0, textAlign: 'right', fontWeight: 700 }}>Incluido</dd>
+          {retailPrice > 0 && (
+            <><dt style={{ color: 'var(--text)' }}>Suelto con envío</dt>
+            <dd style={{ margin: 0, textAlign: 'right', fontWeight: 400, textDecoration: 'line-through', color: 'var(--text)' }}>{formatPrice(retailPrice)}</dd></>
+          )}
+        </dl>
+
+        {/* Savings */}
+        {retailPrice > 0 && perShipment > 0 && (
+          <span style={{ fontSize: 13 }}>
+            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.08em', color: 'var(--accent)', marginRight: 4 }}>AHORRO</span>
+            {formatPrice(retailPrice - perShipment)} por entrega
+          </span>
+        )}
+
+        {/* Total */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', fontWeight: 700, fontSize: 16 }}>
+          <span>Total al mes</span>
+          <span style={{ fontSize: 38, color: 'var(--accent)', letterSpacing: '-0.03em' }}>
+            {monthly ? formatPrice(monthly) : '—'}
+          </span>
+        </div>
 
         {/* Fine print */}
         {monthly > 0 && (
-          <span style={{ fontSize: 11, lineHeight: 1.5, color: 'var(--text)' }}>
-            {state.freqDays === 15
-              ? 'Débito mensual vía Mercado Pago. Cubre 2 entregas.'
-              : 'Débito mensual vía Mercado Pago.'}
+          <span style={{ fontSize: 12, lineHeight: 1.5, color: 'var(--text)' }}>
+            Se debita una vez al mes con Mercado Pago.
           </span>
         )}
       </div>
@@ -310,6 +299,7 @@ function scrollTop() {
 function App() {
   const [state, dispatch] = useReducer(reducer, initial)
   const [typing, setTyping] = useState(false)
+  const mainRef = useRef<HTMLDivElement>(null)
 
   const plan = state.planId ? getPlanById(state.planId) : null
   const grindObj = state.grind ? GRIND_OPTIONS.find(g => g.id === state.grind) : null
@@ -319,14 +309,41 @@ function App() {
     !!(state.line && plan && state.freqDays && grindObj),
   ]
 
+  // GSAP smooth step transition
   const goStep = useCallback((step: 1 | 2 | 3) => {
-    dispatch({ type: 'GO_STEP', step })
-    scrollTop()
+    if (mainRef.current) {
+      gsap.to(mainRef.current, {
+        opacity: 0, y: 8, duration: 0.15, ease: 'power2.in',
+        onComplete: () => {
+          dispatch({ type: 'GO_STEP', step })
+          scrollTop()
+          gsap.fromTo(mainRef.current!, { opacity: 0, y: 12 }, {
+            opacity: 1, y: 0, duration: 0.4, ease: 'power2.out',
+          })
+        }
+      })
+    } else {
+      dispatch({ type: 'GO_STEP', step })
+      scrollTop()
+    }
   }, [])
 
   const handleSelectLine = useCallback((line: 'diario' | 'especial') => {
-    dispatch({ type: 'SELECT_LINE', line })
-    scrollTop()
+    if (mainRef.current) {
+      gsap.to(mainRef.current, {
+        opacity: 0, y: 8, duration: 0.15, ease: 'power2.in',
+        onComplete: () => {
+          dispatch({ type: 'SELECT_LINE', line })
+          scrollTop()
+          gsap.fromTo(mainRef.current!, { opacity: 0, y: 12 }, {
+            opacity: 1, y: 0, duration: 0.4, ease: 'power2.out',
+          })
+        }
+      })
+    } else {
+      dispatch({ type: 'SELECT_LINE', line })
+      scrollTop()
+    }
   }, [])
 
   const handleUpdatePlan = useCallback((planId: string, freqId: string, freqDays: number) => {
@@ -342,7 +359,7 @@ function App() {
   return (
     <div style={{ minHeight: '100%', background: 'var(--bg)', color: 'var(--ink)', fontFamily: 'var(--font)' }}>
       <div className="app-container" style={{
-        maxWidth: 1120, margin: '0 auto', padding: '24px 24px 140px',
+        maxWidth: 1240, margin: '0 auto', padding: '24px 24px 140px',
         boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: 28,
       }}>
         {/* Stepper — sticky nav */}
@@ -357,7 +374,7 @@ function App() {
 
         {/* Main content */}
         <div className="cols">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24, minWidth: 0 }}>
+          <div ref={mainRef} style={{ display: 'flex', flexDirection: 'column', gap: 24, minWidth: 0 }}>
             <div key={`s1-${state.step}`} className={state.step === 1 ? 'step-enter' : undefined} style={{ display: state.step === 1 ? 'contents' : 'none' }}>
               <StepCafe
                 selectedLine={state.line}
