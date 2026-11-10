@@ -134,6 +134,7 @@ function Sidebar({ state }: { state: FlowState }) {
   const perShipment = plan && state.freqDays ? getPerShipmentPrice(plan.id, state.freqDays) ?? 0 : 0
 
   const retailPrice = plan?.retailWithShipping ?? 0
+  const saving = retailPrice > 0 && perShipment > 0 ? retailPrice - perShipment : 0
 
   const sidebarRef = useRef<HTMLElement>(null)
 
@@ -149,88 +150,99 @@ function Sidebar({ state }: { state: FlowState }) {
   return (
     <aside
       ref={sidebarRef}
-      className="only-d"
+      className="only-d sidebar-metallic"
       aria-label="Tu plan"
       aria-live="polite"
       style={{
         position: 'sticky', top: 20,
         display: 'flex', flexDirection: 'column', gap: 0,
-        background: 'var(--bg)', color: 'var(--ink)',
-        borderRadius: 16, overflow: 'hidden',
+        borderRadius: 18, overflow: 'hidden',
+        border: '1px solid rgba(255,255,255,.45)',
+        boxShadow: '0 8px 32px rgba(10,10,10,.10), 0 1px 4px rgba(10,10,10,.06), inset 0 1px 0 rgba(255,255,255,.6)',
       }}
     >
-      {/* Orange header band */}
-      <span style={{
-        display: 'flex', justifyContent: 'space-between', padding: '9px 18px',
-        background: 'var(--accent)', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em',
-        textTransform: 'uppercase',
+      {/* ── Dark header ── */}
+      <div style={{
+        padding: '20px 22px 18px',
+        background: 'linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 60%, #252525 100%)',
+        color: '#F9F4ED',
+        display: 'flex', flexDirection: 'column', gap: 6,
       }}>
-        <span>Tu suscripción</span>
-        <span>Medellín</span>
-      </span>
-
-      <div style={{ padding: '16px 18px 18px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {/* Plan name */}
-        <div>
-          <span style={{ fontSize: 15, fontWeight: 700, letterSpacing: '-0.01em', lineHeight: 1.1 }}>
-            {lineInfo ? lineInfo.name : 'Tu café'}
+        <span style={{
+          fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase',
+          color: 'var(--accent)',
+        }}>
+          Tu suscripción
+        </span>
+        <span style={{ fontSize: 20, fontWeight: 700, lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+          {lineInfo ? lineInfo.name : 'Tu café'}
+        </span>
+        {lineInfo && (
+          <span style={{ fontSize: 12, color: 'rgba(249,244,237,.55)', lineHeight: 1.4 }}>
+            {state.line === 'diario' ? 'Caturra Lavado Tradicional' : 'Selección del tostador · Nota de cata incluida'}
           </span>
-          {lineInfo && (
-            <span style={{ display: 'block', fontSize: 11, marginTop: 2, color: 'var(--text)' }}>
-              {state.line === 'diario' ? 'Caturra Lavado Tradicional' : 'Selección del tostador'}
+        )}
+      </div>
+
+      {/* ── White body ── */}
+      <div style={{
+        padding: '18px 22px 20px',
+        background: 'linear-gradient(180deg, #FFFFFF 0%, #FAFAF8 100%)',
+        display: 'flex', flexDirection: 'column', gap: 14,
+      }}>
+        {/* Config rows — UPPERCASE labels */}
+        <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '8px 16px', margin: 0, fontSize: 12 }}>
+          <dt style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--text)', paddingTop: 1 }}>Cantidad</dt>
+          <dd style={{ margin: 0, textAlign: 'right', fontWeight: 600 }}>{plan ? `${plan.name} · ~${plan.cupsPerShipment} tazas` : '—'}</dd>
+
+          <dt style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--text)', paddingTop: 1 }}>Molienda</dt>
+          <dd style={{ margin: 0, textAlign: 'right', fontWeight: 600 }}>{grindObj ? grindObj.label : '—'}</dd>
+
+          <dt style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--text)', paddingTop: 1 }}>Frecuencia</dt>
+          <dd style={{ margin: 0, textAlign: 'right', fontWeight: 600 }}>{freqLabel ?? '—'}{state.freqDays === 15 ? ' · 2/mes' : ''}</dd>
+
+          <dt style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--text)', paddingTop: 1 }}>Domicilio</dt>
+          <dd style={{ margin: 0, textAlign: 'right', fontWeight: 600, color: 'var(--ok)' }}>Incluido</dd>
+        </dl>
+
+        {/* Separator */}
+        <span aria-hidden="true" style={{ display: 'block', height: 1, background: 'var(--line)', margin: '0 -2px' }} />
+
+        {/* Price section */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <span style={{ fontSize: 26, fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1 }}>
+              {monthly ? formatPrice(monthly) : '—'}
             </span>
+            <span style={{ fontSize: 12, color: 'var(--text)' }}>/mes</span>
+          </div>
+          {retailPrice > 0 && (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
+              <span style={{ fontSize: 12, color: 'var(--text)', textDecoration: 'line-through' }}>
+                {formatPrice(retailPrice)}
+              </span>
+              {perShipment > 0 && (
+                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ok)' }}>
+                  {formatPrice(perShipment)}
+                </span>
+              )}
+            </div>
           )}
         </div>
 
-        {/* Config rows */}
-        <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '5px 12px', margin: 0, fontSize: 12 }}>
-          {plan && <><dt style={{ color: 'var(--text)' }}>Cantidad</dt><dd style={{ margin: 0, textAlign: 'right', fontWeight: 700 }}>{plan.name} · ~{plan.cupsPerShipment} tazas</dd></>}
-          {grindObj && <><dt style={{ color: 'var(--text)' }}>Molienda</dt><dd style={{ margin: 0, textAlign: 'right', fontWeight: 700 }}>{grindObj.label}</dd></>}
-          {freqLabel && <><dt style={{ color: 'var(--text)' }}>Frecuencia</dt><dd style={{ margin: 0, textAlign: 'right', fontWeight: 700 }}>{freqLabel}{state.freqDays === 15 ? ' · 2/mes' : ''}</dd></>}
-        </dl>
-
-        {/* Ticket perforation */}
-        <span aria-hidden="true" style={{
-          position: 'relative', display: 'block',
-          borderTop: '1.5px dashed rgba(10,10,10,.15)',
-          margin: '4px -18px',
-        }}>
-          <span style={{ position: 'absolute', left: -8, top: -8, width: 16, height: 16, borderRadius: '50%', background: 'var(--sand)' }} />
-          <span style={{ position: 'absolute', right: -8, top: -8, width: 16, height: 16, borderRadius: '50%', background: 'var(--sand)' }} />
-        </span>
-
-        {/* Price breakdown */}
-        <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '5px 12px', margin: 0, fontSize: 12 }}>
-          <dt style={{ color: 'var(--text)' }}>Por entrega</dt>
-          <dd style={{ margin: 0, textAlign: 'right', fontWeight: 700 }}>{perShipment ? formatPrice(perShipment) : '—'}</dd>
-          <dt style={{ color: 'var(--text)' }}>Domicilio</dt>
-          <dd style={{ margin: 0, textAlign: 'right', fontWeight: 700 }}>Incluido</dd>
-          {retailPrice > 0 && (
-            <><dt style={{ color: 'var(--text)' }}>Suelto con envío</dt>
-            <dd style={{ margin: 0, textAlign: 'right', fontWeight: 400, textDecoration: 'line-through', color: 'var(--text)' }}>{formatPrice(retailPrice)}</dd></>
-          )}
-        </dl>
-
-        {/* Savings */}
-        {retailPrice > 0 && perShipment > 0 && (
-          <span style={{ fontSize: 12 }}>
-            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.08em', color: 'var(--accent)', marginRight: 3 }}>AHORRO</span>
-            {formatPrice(retailPrice - perShipment)}/entrega
+        {/* Savings badge */}
+        {saving > 0 && (
+          <span style={{
+            fontSize: 12, lineHeight: 1.4, color: 'var(--text)',
+          }}>
+            Ahorras <span style={{ fontWeight: 700, color: 'var(--ok)' }}>{formatPrice(saving)}</span>/entrega
           </span>
         )}
 
-        {/* Total */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', fontWeight: 700, fontSize: 14, marginTop: 2 }}>
-          <span>Total al mes</span>
-          <span style={{ fontSize: 28, color: 'var(--accent)', letterSpacing: '-0.03em' }}>
-            {monthly ? formatPrice(monthly) : '—'}
-          </span>
-        </div>
-
         {/* Fine print */}
         {monthly > 0 && (
-          <span style={{ fontSize: 11, lineHeight: 1.5, color: 'var(--text)' }}>
-            Se debita una vez al mes con Mercado Pago.
+          <span style={{ fontSize: 11, lineHeight: 1.5, color: 'var(--text)', marginTop: 2 }}>
+            Débito mensual vía Mercado Pago.
           </span>
         )}
       </div>

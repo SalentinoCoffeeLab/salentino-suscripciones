@@ -129,7 +129,39 @@ textarea.inp { min-height: 70px; line-height: 1.5; }
 }
 
 /* ── GSAP performance hints ── */
-.line-card, .opt, .btn, .glass-pill { will-change: transform; }
+.line-card, .opt, .btn, .glass-pill, .sidebar-metallic { will-change: transform; }
+
+/* ── Metallic sidebar card ── */
+.sidebar-metallic {
+  background: linear-gradient(
+    165deg,
+    #FFFFFF 0%,
+    #F0EDE8 40%,
+    #E8E4DE 60%,
+    #F5F2ED 80%,
+    #FFFFFF 100%
+  );
+  position: relative;
+}
+.sidebar-metallic::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(200, 195, 188, 0.5) 30%,
+    rgba(180, 175, 165, 0.4) 50%,
+    rgba(220, 215, 208, 0.6) 70%,
+    rgba(255, 255, 255, 0.8) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
 
 /* ── Pop animation ── */
 .pop { animation: pop .3s ease-out; }
