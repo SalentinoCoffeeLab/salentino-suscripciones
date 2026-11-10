@@ -8,6 +8,7 @@ import {
   LINE_INFO,
   GRIND_OPTIONS,
 } from './data/plans'
+import { MercadoPagoLogo } from './components/MercadoPagoLogo'
 import { StepCafe } from './components/StepCafe'
 import { StepConfigura } from './components/StepConfigura'
 import { StepEntrega } from './components/StepEntrega'
@@ -179,7 +180,7 @@ function Sidebar({ state }: { state: FlowState }) {
         </span>
         {lineInfo && (
           <span style={{ fontSize: 12, color: 'rgba(249,244,237,.55)', lineHeight: 1.4 }}>
-            {state.line === 'diario' ? 'Caturra Lavado Tradicional' : 'Selección del tostador · Nota de cata incluida'}
+            {state.line === 'diario' ? 'Caturra Lavado Tradicional' : 'Selección del tostador'}
           </span>
         )}
       </div>
@@ -241,8 +242,8 @@ function Sidebar({ state }: { state: FlowState }) {
 
         {/* Fine print */}
         {monthly > 0 && (
-          <span style={{ fontSize: 11, lineHeight: 1.5, color: 'var(--text)', marginTop: 2 }}>
-            Débito mensual vía Mercado Pago.
+          <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, lineHeight: 1.5, color: 'var(--text)', marginTop: 2 }}>
+            Débito mensual vía <MercadoPagoLogo height={14} />
           </span>
         )}
       </div>

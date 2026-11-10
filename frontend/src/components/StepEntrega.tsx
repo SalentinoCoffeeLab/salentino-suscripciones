@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 import { formatPrice, getMonthlyPrice, getPerShipmentPrice, getCheckoutUrl, getMpPlanKey, getPlanById, LINE_INFO, GRIND_OPTIONS, CITIES } from '../data/plans'
 import { submitSubscription } from '../lib/submit'
+import { MercadoPagoLogo } from './MercadoPagoLogo'
 import { validateNit } from '../lib/nit'
 
 interface StepEntregaProps {
@@ -455,9 +456,9 @@ export function StepEntrega({
         </button>
       </div>
 
-      <span style={{ fontSize: 12, lineHeight: 1.5, color: 'var(--text)' }}>
-        Se debitan {formatPrice(monthly)} una vez al mes con Mercado Pago
-        {freqDays === 15 ? `, y cubren tus 2 entregas (${freqLabel.toLowerCase()}).` : '.'} No guardamos datos de tu tarjeta.
+      <span style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 4, fontSize: 12, lineHeight: 1.5, color: 'var(--text)' }}>
+        Se debitan {formatPrice(monthly)} una vez al mes con <MercadoPagoLogo height={13} />
+        {freqDays === 15 ? ` y cubren tus 2 entregas (${freqLabel.toLowerCase()}).` : '.'} No guardamos datos de tu tarjeta.
       </span>
 
       {/* Trust badges */}
@@ -466,7 +467,7 @@ export function StepEntrega({
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" />
           </svg>
-          Cobro con Mercado Pago
+          Cobro con <MercadoPagoLogo height={12} />
         </span>
         <span>Pausa o cancela por WhatsApp</span>
         <span>Sin penalidad</span>

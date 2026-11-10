@@ -1,4 +1,6 @@
+import type { ReactNode } from 'react'
 import { LINE_INFO, getPlansForLine, getPerShipmentPrice, formatPrice } from '../data/plans'
+import { MercadoPagoLogo } from './MercadoPagoLogo'
 
 interface StepCafeProps {
   selectedLine: 'diario' | 'especial' | null
@@ -13,10 +15,10 @@ const DESCRIPTIONS: Record<string, string> = {
   especial: 'Micro-lotes que elige el tostador. Cada entrega es un café distinto, con su nota de cata.',
 }
 
-const FAQ = [
-  { q: '¿Cómo pauso o cancelo?', a: 'Escríbenos por WhatsApp y la pausamos o cancelamos. También puedes cancelarla desde tu cuenta de Mercado Pago. Sin penalidad.' },
+const FAQ: { q: string; a: ReactNode }[] = [
+  { q: '¿Cómo pauso o cancelo?', a: <>Escríbenos por WhatsApp y la pausamos o cancelamos. También puedes cancelarla desde tu cuenta de <MercadoPagoLogo height={13} />. Sin penalidad.</> },
   { q: '¿Puedo cambiar la molienda o la cantidad?', a: 'Sí. Escríbenos antes de tu próxima entrega y la ajustamos.' },
-  { q: '¿Cómo se cobra el plan cada 15 días?', a: 'Mercado Pago cobra una vez al mes el valor de tus 2 entregas.' },
+  { q: '¿Cómo se cobra el plan cada 15 días?', a: <><MercadoPagoLogo height={13} /> cobra una vez al mes el valor de tus 2 entregas.</> },
   { q: '¿Cuándo llega la primera entrega?', a: 'Despachamos en 1–2 días hábiles. En Medellín y el Área Metropolitana llega en 24–48 h.' },
   { q: '¿Llegan a otras ciudades?', a: 'Por ahora el domicilio incluido es para Medellín y el Área Metropolitana. Si estás en otra ciudad, escríbenos.' },
 ]
